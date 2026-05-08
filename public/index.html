@@ -6,8 +6,8 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css">
-    <!-- <link rel="stylesheet" href="style.css"> -->
     <link rel="stylesheet" href="styles/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -17,7 +17,7 @@
     <button class="rail-btn active" data-panel="trip">📍 Planuj podróż</button>
     <button class="rail-btn" data-panel="lines">🚌 Linie</button>
     <button class="rail-btn disabled">⭐ Ulubione <span class="rail-soon">wkrótce</span></button>
-    <button class="rail-btn disabled">📊 Statystyki <span class="rail-soon">wkrótce</span></button>
+    <button class="rail-btn" data-panel="stats">📊 Statystyki</button>
     <div class="rail-spacer"></div>
     <button class="rail-icon-btn" id="theme-toggle" title="Tryb ciemny/jasny">🌙</button>
 </div>
@@ -75,12 +75,23 @@
             <div id="lines-list"></div>
         </div>
     </div>
+
+    <!-- PANEL: STATYSTYKI -->
+    <div class="panel-content" data-panel="stats">
+        <div class="panel-header">
+            <h2>📊 Statystyki</h2>
+            <button class="panel-close" data-close>✕</button>
+        </div>
+        <div class="panel-body">
+            <div id="stats-content" class="stats-loading">⏳ Ładowanie...</div>
+        </div>
+    </div>
 </div>
 
 <!-- MAPA -->
 <div id="map"></div>
 
-<!-- POWIADOMIENIE FILTRA LINII (już masz) -->
+<!-- POWIADOMIENIE FILTRA LINII -->
 <div id="filter-notice" class="filter-notice">
     <span id="filter-notice-text"></span>
     <button id="filter-notice-clear">✕ Wyczyść</button>

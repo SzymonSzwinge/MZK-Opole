@@ -24,3 +24,6 @@
 
 /* Tryb ciemny */
 @import "dark.css";
+
+/* Statystyki */
+@import "components/stats.css";

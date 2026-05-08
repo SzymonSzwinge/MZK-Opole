@@ -6,6 +6,7 @@ const { getStopDepartures } = require("./departures");
 const { planTrip } = require("./planner");
 const { getReachableStops, getReachableToStop } = require("./reachability");
 const { startShapeWarmer } = require("./shapeWarmer");
+const { getStats } = require("./stats");
 
 module.exports = {
     getLines,
@@ -19,4 +20,5 @@ module.exports = {
     getReachableStops,
     getReachableToStop,
     startShapeWarmer,
+    getStats,
 };

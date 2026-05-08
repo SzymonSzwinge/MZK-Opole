@@ -12,8 +12,8 @@ import { initLinesPanel } from "./ui/lines.js";
 import { initFilterNotice } from "./ui/notices.js";
 import { initGeolocation } from "./ui/geolocation.js";
 import { initTripPlanner } from "./trip/planner.js";
+import { initStats } from "./stats/stats.js";
 
-// ========== ŁADOWANIE LINII ==========
 async function loadLines() {
     try {
         const lines = await fetchApi("/api/lines");
@@ -23,18 +23,16 @@ async function loadLines() {
     }
 }
 
-// ========== KLIKNIĘCIE MAPY CZYŚCI TRASĘ ==========
 map.on("click", () => clearVehicleRoute());
 
-// ========== INICJALIZACJA UI ==========
 initTheme();
 initPanels();
 initLinesPanel();
 initFilterNotice();
 initGeolocation();
 initTripPlanner();
+initStats();
 
-// ========== START ==========
 (async () => {
     await loadLines();
     await loadStops();
