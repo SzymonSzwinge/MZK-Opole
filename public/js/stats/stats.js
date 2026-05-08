@@ -2,8 +2,10 @@
 import { fetchApi } from "../api/client.js";
 import { onPanelClose } from "../ui/panels.js";
 import { renderPunctualityDonut, destroyChart } from "./donutChart.js";
+import { showVehicleRoute } from "../vehicles/route.js";
+import { map } from "../map/mapInit.js";
 
-const REFRESH_MS = 15000; // odśwież co 15 sek
+const REFRESH_MS = 15000;
 let refreshTimer = null;
 let isPanelOpen = false;
 
@@ -11,10 +13,8 @@ export function initStats() {
     const railBtn = document.querySelector('.rail-btn[data-panel="stats"]');
     if (!railBtn) return;
 
-    // Przy otwarciu panelu
     railBtn.addEventListener("click", () => {
         if (railBtn.classList.contains("disabled")) return;
-        // Lekka zwłoka żeby panel zdążył się otworzyć
         setTimeout(() => {
             const panel = document.querySelector('.panel-content[data-panel="stats"]');
             if (panel?.classList.contains("active")) {
@@ -23,10 +23,18 @@ export function initStats() {
         }, 50);
     });
 
-    // Przy zamknięciu panelu
     onPanelClose("stats", () => {
         closeStats();
     });
+
+    // Globalna funkcja klikania w pojazd ze statystyk
+    window._showStatVehicle = function (courseId, variantId, vehicleId, lat, lon) {
+        if (!courseId || !variantId) return;
+        if (lat && lon) {
+            map.setView([lat, lon], 15);
+        }
+        showVehicleRoute({ courseId, variantId, vehicleId });
+    };
 }
 
 function openStats() {
@@ -69,6 +77,12 @@ function formatDelay(sec) {
     return `${sign}${min} min ${s}s`;
 }
 
+function escapeHtml(str) {
+    return (str || "").replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[c]));
+}
+
 function renderStats(d) {
     const container = document.getElementById("stats-content");
     if (!container) return;
@@ -79,7 +93,6 @@ function renderStats(d) {
     const pctDelayed = ((p.delayed / total) * 100).toFixed(0);
     const pctEarly = ((p.early / total) * 100).toFixed(0);
 
-    // Klasa dla średniego opóźnienia
     let avgClass = "stat-value-neutral";
     if (p.avgDelaySec > 120) avgClass = "stat-value-bad";
     else if (p.avgDelaySec > 30) avgClass = "stat-value-warn";
@@ -93,11 +106,11 @@ function renderStats(d) {
     });
 
     // ===== Najbardziej opóźniona linia =====
-    let mostDelayedHtml;
+    let mostDelayedLineHtml;
     if (d.mostDelayedLine && d.mostDelayedLine.avgDelaySec > 60) {
         const ml = d.mostDelayedLine;
         const lineClass = ml.nightLine ? "stat-line-badge night" : "stat-line-badge";
-        mostDelayedHtml = `
+        mostDelayedLineHtml = `
             <div class="stat-card">
                 <div class="stat-section-title">⚠️ Najbardziej opóźniona linia</div>
                 <div class="stat-most-delayed">
@@ -107,10 +120,11 @@ function renderStats(d) {
                         <div class="stat-most-delayed-meta">średnio na ${ml.vehicleCount} pojazdach</div>
                     </div>
                 </div>
+                <div class="stat-source">Liczone dla linii z min. 2 aktywnymi pojazdami</div>
             </div>
         `;
     } else {
-        mostDelayedHtml = `
+        mostDelayedLineHtml = `
             <div class="stat-card">
                 <div class="stat-section-title">✅ Najbardziej opóźniona linia</div>
                 <div class="stat-most-delayed-empty">
@@ -120,8 +134,47 @@ function renderStats(d) {
         `;
     }
 
+    // ===== Najbardziej opóźniony pojazd =====
+    let mostDelayedVehicleHtml;
+    if (d.mostDelayedVehicle) {
+        const mv = d.mostDelayedVehicle;
+        const lineClass = mv.nightLine ? "stat-line-badge night" : "stat-line-badge";
+        const safeDir = escapeHtml(mv.direction);
+        const clickable = mv.courseId && mv.variantId;
+
+        const onClick = clickable
+            ? `onclick="window._showStatVehicle(${mv.courseId}, ${mv.variantId}, '${mv.vehicleId}', ${mv.lat || "null"}, ${mv.lon || "null"})"`
+            : "";
+
+        mostDelayedVehicleHtml = `
+            <div class="stat-card stat-vehicle-card ${clickable ? "clickable" : ""}" ${onClick}>
+                <div class="stat-section-title">🐢 Najbardziej opóźniony pojazd</div>
+                <div class="stat-most-delayed">
+                    <span class="${lineClass}">${mv.line}</span>
+                    <div class="stat-most-delayed-info">
+                        <div class="stat-most-delayed-value">${formatDelay(mv.delaySec)}</div>
+                        <div class="stat-vehicle-meta">
+                            <span class="stat-vehicle-id">#${mv.vehicleId}</span>
+                            <span class="stat-vehicle-dir">→ ${safeDir}</span>
+                        </div>
+                    </div>
+                </div>
+                ${clickable ? `<div class="stat-source">👆 Kliknij, aby zobaczyć trasę na mapie</div>` : ""}
+            </div>
+        `;
+    } else {
+        mostDelayedVehicleHtml = `
+            <div class="stat-card">
+                <div class="stat-section-title">✅ Najbardziej opóźniony pojazd</div>
+                <div class="stat-most-delayed-empty">
+                    Żaden pojazd nie jest opóźniony powyżej 1 min
+                </div>
+            </div>
+        `;
+    }
+
     container.innerHTML = `
-        <!-- Sekcja: Pojazdy -->
+        <!-- Pojazdy na trasach -->
         <div class="stat-card">
             <div class="stat-section-title">🚌 Pojazdy na trasach</div>
             <div class="stat-big-number">${d.vehicles.total}</div>
@@ -132,14 +185,14 @@ function renderStats(d) {
             <div class="stat-source">Dane na żywo z systemu MZK</div>
         </div>
 
-        <!-- Sekcja: Średnie opóźnienie -->
+        <!-- Średnie opóźnienie -->
         <div class="stat-card">
             <div class="stat-section-title">⏱️ Średnie opóźnienie w mieście</div>
             <div class="stat-big-number ${avgClass}">${formatDelay(p.avgDelaySec)}</div>
             <div class="stat-source">Średnia ze wszystkich aktywnych pojazdów</div>
         </div>
 
-        <!-- Sekcja: Punktualność (donut) -->
+        <!-- Punktualność -->
         <div class="stat-card">
             <div class="stat-section-title">🎯 Punktualność pojazdów</div>
             <div class="stat-donut-wrap">
@@ -165,10 +218,13 @@ function renderStats(d) {
             <div class="stat-source">Punktualne = odchylenie ±1 min od rozkładu</div>
         </div>
 
-        <!-- Sekcja: Najbardziej opóźniona linia -->
-        ${mostDelayedHtml}
+        <!-- Najbardziej opóźniona linia -->
+        ${mostDelayedLineHtml}
 
-        <!-- Sekcja: Sieć -->
+        <!-- Najbardziej opóźniony pojazd -->
+        ${mostDelayedVehicleHtml}
+
+        <!-- Sieć MZK -->
         <div class="stat-card">
             <div class="stat-section-title">🗺️ Sieć MZK Opole</div>
             <div class="stat-grid-2">
@@ -190,7 +246,6 @@ function renderStats(d) {
         </div>
     `;
 
-    // Render donut po wstawieniu canvas do DOM
     const canvas = document.getElementById("punctuality-donut");
     if (canvas) {
         renderPunctualityDonut(canvas, p);

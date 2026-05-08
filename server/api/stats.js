@@ -2,10 +2,6 @@ const { getEnrichedVehicles } = require("./vehicles");
 const { getLines } = require("./lines");
 const { getStops } = require("./stops");
 
-/**
- * Agreguje statystyki w czasie rzeczywistym.
- * Wszystko liczone na bieżąco z dostępnych endpointów MZK.
- */
 async function getStats() {
     const [vehicles, lines, stops] = await Promise.all([
         getEnrichedVehicles(),
@@ -22,10 +18,6 @@ async function getStats() {
     }
 
     // ===== PUNKTUALNOŚĆ =====
-    // Definicja:
-    //   punktualny: |delaySec| <= 60
-    //   opóźniony:  delaySec > 60
-    //   przed czasem: delaySec < -60
     let onTime = 0;
     let delayed = 0;
     let early = 0;
@@ -38,7 +30,6 @@ async function getStats() {
         else if (d < -60) early++;
         else onTime++;
 
-        // Do średniej liczymy wszystkie pojazdy (włącznie z punktualnymi)
         totalDelaySec += d;
         countedForAvg++;
     }
@@ -47,10 +38,7 @@ async function getStats() {
         ? Math.round(totalDelaySec / countedForAvg)
         : 0;
 
-    // ===== NAJBARDZIEJ OPÓŹNIONA LINIA =====
-    // Grupujemy pojazdy po linii i liczymy średnie opóźnienie per linia.
-    // Bierzemy pod uwagę tylko linie z minimum 2 aktywnymi pojazdami,
-    // żeby nie pokazywać linii z jednym losowo opóźnionym pojazdem.
+    // ===== NAJBARDZIEJ OPÓŹNIONA LINIA (średnia z min. 2 pojazdów) =====
     const byLine = new Map();
     for (const v of vehicles) {
         if (!byLine.has(v.line)) {
@@ -73,6 +61,26 @@ async function getStats() {
                 avgDelaySec: Math.round(avg),
                 vehicleCount: entry.count,
                 nightLine: entry.nightLine,
+            };
+        }
+    }
+
+    // ===== NAJBARDZIEJ OPÓŹNIONY POJAZD (pojedynczy) =====
+    let mostDelayedVehicle = null;
+    for (const v of vehicles) {
+        const d = v.delaySec ?? 0;
+        if (d <= 60) continue; // tylko realnie opóźnione
+        if (!mostDelayedVehicle || d > mostDelayedVehicle.delaySec) {
+            mostDelayedVehicle = {
+                vehicleId: v.id,
+                line: v.line,
+                direction: v.direction || "?",
+                delaySec: d,
+                nightLine: v.nightLine,
+                courseId: v.courseId,
+                variantId: v.variantId,
+                lat: v.lat,
+                lon: v.lon,
             };
         }
     }
@@ -101,6 +109,7 @@ async function getStats() {
             avgDelaySec,
         },
         mostDelayedLine,
+        mostDelayedVehicle,
         lines: {
             total: totalLines,
             day: dayLines,
