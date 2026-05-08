@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>MZK Opole - Mapa pojazdów na żywo</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- WĄSKI PASEK Z NAZWAMI (zawsze widoczny) -->
+<div id="sidebar-rail">
+    <div class="rail-logo">🚌 MZK Opole</div>
+    <button class="rail-btn active" data-panel="trip">📍 Planuj podróż</button>
+    <button class="rail-btn" data-panel="lines">🚌 Linie</button>
+    <button class="rail-btn disabled">⭐ Ulubione <span class="rail-soon">wkrótce</span></button>
+    <button class="rail-btn disabled">📊 Statystyki <span class="rail-soon">wkrótce</span></button>
+    <div class="rail-spacer"></div>
+    <button class="rail-icon-btn" id="theme-toggle" title="Tryb ciemny/jasny">🌙</button>
+</div>
+
+<!-- ROZWIJANY PANEL -->
+<div id="sidebar-panel">
+    <!-- PANEL: PLANUJ PODRÓŻ (otwarty domyślnie) -->
+    <div class="panel-content active" data-panel="trip">
+        <div class="panel-header">
+            <h2>📍 Planuj podróż</h2>
+            <button class="panel-close" data-close>✕</button>
+        </div>
+        <div class="panel-body">
+            <button id="geo-btn" class="geo-button">📍 Z mojej lokalizacji</button>
+            <div class="trip-input-group">
+                <label>Z:</label>
+                <div class="trip-input-wrapper">
+                    <input type="text" id="trip-from-input" placeholder="Wybierz przystanek..." />
+                    <button class="trip-pick-btn" id="trip-from-pick" title="Wybierz na mapie">🎯</button>
+                    <button class="trip-clear-btn" id="trip-from-clear" title="Wyczyść">✕</button>
+                </div>
+                <div id="trip-from-suggestions" class="suggestions-dropdown"></div>
+            </div>
+            <div class="trip-input-group">
+                <label>Do:</label>
+                <div class="trip-input-wrapper">
+                    <input type="text" id="trip-to-input" placeholder="Wybierz przystanek..." />
+                    <button class="trip-pick-btn" id="trip-to-pick" title="Wybierz na mapie">🎯</button>
+                    <button class="trip-clear-btn" id="trip-to-clear" title="Wyczyść">✕</button>
+                </div>
+                <div id="trip-to-suggestions" class="suggestions-dropdown"></div>
+            </div>
+            <button id="trip-search" class="trip-search-btn">🔍 Szukaj połączeń</button>
+            <div id="trip-results"></div>
+        </div>
+    </div>
+
+    <!-- PANEL: LINIE -->
+    <div class="panel-content" data-panel="lines">
+        <div class="panel-header">
+            <h2>🚌 Linie</h2>
+            <button class="panel-close" data-close>✕</button>
+        </div>
+        <div class="panel-body">
+            <div id="counter-detail" class="counter-detail">Ładowanie...</div>
+            
+            <input type="text" id="search" placeholder="🔍 Szukaj linii (np. 5, N1)..." />
+            
+            <div class="filter-toggles">
+                <label><input type="checkbox" id="filter-day" checked> Dzienne</label>
+                <label><input type="checkbox" id="filter-night" checked> Nocne</label>
+            </div>
+            
+            <div class="lines-divider">Wszystkie linie aktywne:</div>
+            <div id="lines-list"></div>
+        </div>
+    </div>
+</div>
+
+<!-- MAPA -->
+<div id="map"></div>
+
+<!-- POWIADOMIENIE FILTRA -->
+<div id="filter-notice" class="filter-notice">
+    <span id="filter-notice-text"></span>
+    <button id="filter-notice-clear">✕ Wyczyść</button>
+</div>
+<!-- POWIADOMIENIE FILTRA LINII (już masz) -->
+<div id="filter-notice" class="filter-notice">
+    <span id="filter-notice-text"></span>
+    <button id="filter-notice-clear">✕ Wyczyść</button>
+</div>
+
+<!-- POWIADOMIENIA TRIP -->
+<div id="trip-notice-from" class="filter-notice trip-notice from">
+    <span class="trip-notice-icon">🟢</span>
+    <span id="trip-notice-from-text"></span>
+    <button class="trip-notice-clear" data-clear="from">✕ Anuluj</button>
+</div>
+
+<div id="trip-notice-to" class="filter-notice trip-notice to">
+    <span class="trip-notice-icon">🎯</span>
+    <span>Wybieranie celu podróży...</span>
+    <button class="trip-notice-clear" data-clear="to">✕ Anuluj</button>
+</div>
+
+<div id="trip-notice-plan" class="filter-notice trip-notice plan">
+    <span class="trip-notice-icon">🗺️</span>
+    <span id="trip-notice-plan-text"></span>
+    <button class="trip-notice-clear" data-clear="plan">✕ Anuluj</button>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
