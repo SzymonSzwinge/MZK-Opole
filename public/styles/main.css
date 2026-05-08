@@ -1,0 +1,26 @@
+/* ============================================
+   MAIN — importuje wszystkie moduły
+   ============================================ */
+
+@import "base.css";
+
+/* Sidebar */
+@import "sidebar/rail.css";
+@import "sidebar/panel.css";
+@import "sidebar/panel-content.css";
+
+/* Mapa */
+@import "map/map.css";
+@import "map/markers.css";
+@import "map/popups.css";
+
+/* Komponenty */
+@import "components/filters.css";
+@import "components/lines.css";
+@import "components/trip-planner.css";
+@import "components/schedule.css";
+@import "components/geolocation.css";
+@import "components/toast.css";
+
+/* Tryb ciemny */
+@import "dark.css";

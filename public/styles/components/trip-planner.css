@@ -1,0 +1,369 @@
+/* ============================================
+   TRIP PLANNER — planowanie podróży
+   ============================================ */
+
+/* ---- Grupa inputów ---- */
+.trip-input-group {
+    margin-bottom: 8px;
+    position: relative;
+}
+
+.trip-input-group label {
+    font-size: 11px;
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 3px;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: color 0.3s;
+}
+
+.trip-input-wrapper {
+    display: flex;
+    gap: 4px;
+}
+
+.trip-input-wrapper input {
+    flex: 1;
+    padding: 7px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+    outline: none;
+    background: white;
+    color: inherit;
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.trip-input-wrapper input:focus {
+    border-color: #d32f2f;
+}
+
+.trip-input-wrapper input.set {
+    background: #e8f5e9;
+    border-color: #4caf50;
+}
+
+/* Przyciski clear / pick */
+.trip-clear-btn {
+    background: #eee;
+    border: none;
+    border-radius: 4px;
+    padding: 0 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #888;
+    transition: background 0.2s;
+}
+
+.trip-clear-btn:hover {
+    background: #ddd;
+    color: #333;
+}
+
+.trip-pick-btn {
+    background: #eee;
+    border: none;
+    border-radius: 4px;
+    padding: 0 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.trip-pick-btn:hover {
+    background: #ddd;
+}
+
+.trip-pick-btn.active {
+    background: #ff5722;
+    color: white;
+    animation: pickPulse 1.5s infinite;
+}
+
+.trip-pick-btn.choosing {
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    color: white;
+    animation: pickPulse 1.5s infinite;
+}
+
+@keyframes pickPulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 87, 34, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(255, 87, 34, 0);
+    }
+}
+
+/* ---- Sugestie (dropdown) ---- */
+.suggestions-dropdown {
+    position: absolute;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 0 0 4px 4px;
+    max-height: 180px;
+    overflow-y: auto;
+    z-index: 10;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.suggestions-dropdown.visible {
+    display: block;
+}
+
+.suggestion-item {
+    padding: 7px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.suggestion-item:hover {
+    background: #f0f0f0;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-name {
+    font-weight: 500;
+}
+
+.suggestion-street {
+    color: #888;
+    font-size: 11px;
+}
+
+/* ---- Przycisk szukaj ---- */
+.trip-search-btn {
+    width: 100%;
+    margin-top: 4px;
+    padding: 9px;
+    border: none;
+    border-radius: 6px;
+    background: #d32f2f;
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.trip-search-btn:hover {
+    background: #b71c1c;
+}
+
+/* ---- Wyniki ---- */
+#trip-results {
+    margin-top: 12px;
+}
+
+.trip-loading {
+    text-align: center;
+    color: #888;
+    padding: 12px 0;
+    font-size: 12px;
+}
+
+.trip-no-results {
+    text-align: center;
+    color: #999;
+    padding: 12px 0;
+    font-size: 12px;
+}
+
+.trip-result {
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.trip-result:hover {
+    background: #fff3e0;
+    border-color: #ff9800;
+}
+
+.trip-result-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.trip-result-line {
+    background: #1976d2;
+    color: white;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.trip-result-line.night {
+    background: #6a1b9a;
+}
+
+.trip-result-direction {
+    font-size: 12px;
+    color: #555;
+}
+
+.trip-result-times {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+}
+
+.trip-result-dep,
+.trip-result-arr {
+    font-weight: bold;
+}
+
+.trip-result-arrow {
+    color: #888;
+}
+
+.trip-result-meta {
+    font-size: 11px;
+    color: #888;
+    margin-top: 4px;
+}
+
+.trip-result-duration {
+    background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+    color: #1b5e20;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 12px;
+    margin-left: auto;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    cursor: help;
+    white-space: nowrap;
+}
+
+/* Statusy wyników */
+.trip-result-status {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.status-live {
+    background: #c8e6c9;
+    color: #1b5e20;
+}
+
+.status-live::before {
+    content: "● ";
+    color: #4caf50;
+    animation: pulse 1.5s infinite;
+}
+
+.status-waiting {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.status-passed {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.status-scheduled {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.status-scheduled::before {
+    content: "● ";
+    color: #1976d2;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+}
+
+/* Odliczanie */
+.trip-countdown {
+    font-size: 13px;
+    font-weight: bold;
+    color: #ff5722;
+    margin-top: 2px;
+}
+
+.trip-countdown.urgent {
+    color: #d32f2f;
+    animation: blink 1s infinite;
+}
+
+.trip-countdown.far {
+    color: #1976d2;
+    font-size: 12px;
+}
+
+@keyframes blink {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Etykieta dnia w wynikach */
+.trip-day-label {
+    display: inline-block;
+    background: #1976d2;
+    color: white;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+.trip-day-label.tomorrow {
+    background: #ff9800;
+}
+
+/* Filtr wyników */
+.trip-results-filter {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0 6px 0;
+    font-size: 11px;
+    color: #555;
+}
+
+.trip-results-filter label {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+}

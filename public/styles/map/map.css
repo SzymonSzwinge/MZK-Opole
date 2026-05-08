@@ -1,0 +1,13 @@
+/* ============================================
+   MAP — kontener mapy
+   ============================================ */
+
+#map {
+    position: absolute;
+    top: 0;
+    left: 200px;
+    right: 0;
+    bottom: 0;
+    background: #e8eef3;
+    transition: background 0.3s, left 0.25s ease;
+}

@@ -1,0 +1,516 @@
+/* ============================================
+   SCHEDULE — rozkład jazdy w popupie
+   ============================================ */
+
+/* ---- Przycisk otwierający ---- */
+.popup-schedule-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px;
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 0.3px;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(25, 118, 210, 0.3);
+}
+
+.popup-schedule-btn:hover {
+    background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(25, 118, 210, 0.4);
+}
+
+.popup-schedule-btn:active {
+    transform: translateY(0);
+}
+
+/* ---- Layout dwukolumnowy ---- */
+.popup-with-schedule {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.popup-main-content {
+    flex: 0 0 240px;
+    min-width: 240px;
+    max-width: 240px;
+}
+
+/* ---- Panel rozkładu ---- */
+.popup-schedule-panel {
+    flex: 0 0 380px;
+    width: 380px;
+    border-left: 2px solid #eee;
+    padding-left: 14px;
+    max-height: 560px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+}
+
+.popup-schedule-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.popup-schedule-panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.popup-schedule-panel::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.popup-schedule-panel::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+/* ---- Nagłówek ---- */
+.popup-schedule-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #d32f2f;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 5;
+}
+
+.popup-schedule-header h4 {
+    font-size: 14px;
+    color: #d32f2f;
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.popup-schedule-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.schedule-reset-btn {
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    color: #555;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+}
+
+.schedule-reset-btn:hover {
+    background: #1976d2;
+    color: white;
+    border-color: #1976d2;
+}
+
+.popup-schedule-close {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    font-size: 16px;
+    line-height: 1;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup-schedule-close:hover {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+/* ---- Nawigacja daty ---- */
+.schedule-date-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding: 8px;
+    background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
+    border-radius: 8px;
+    border: 1px solid #e8e8e8;
+    position: sticky;
+    top: 41px;
+    z-index: 4;
+}
+
+.schedule-nav-btn {
+    background: white;
+    border: 1px solid #ddd;
+    color: #d32f2f;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    flex-shrink: 0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.schedule-nav-btn:hover {
+    background: #d32f2f;
+    color: white;
+    border-color: #d32f2f;
+    transform: scale(1.05);
+}
+
+.schedule-nav-btn:active {
+    transform: scale(0.95);
+}
+
+.schedule-date-label {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+}
+
+.schedule-day-badge {
+    background: #e0e0e0;
+    color: #555;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.schedule-day-badge.today {
+    background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+    color: white;
+    box-shadow: 0 1px 3px rgba(76, 175, 80, 0.4);
+}
+
+.schedule-date-main {
+    font-size: 13px;
+    font-weight: 700;
+    color: #333;
+    text-transform: capitalize;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* ---- Grupa linii ---- */
+.schedule-line-group {
+    margin-bottom: 18px;
+}
+
+.schedule-line-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    padding: 8px 10px;
+    background: linear-gradient(90deg, #f8f8f8 0%, transparent 100%);
+    border-left: 4px solid #1976d2;
+    border-radius: 0 6px 6px 0;
+}
+
+.schedule-line-badge {
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 5px;
+    font-weight: 700;
+    font-size: 13px;
+    min-width: 36px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.5px;
+}
+
+.schedule-line-badge.night {
+    background: linear-gradient(135deg, #6a1b9a 0%, #4a148c 100%);
+}
+
+.schedule-line-direction {
+    font-size: 12px;
+    color: #333;
+    font-weight: 600;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ---- Tabela rozkładu ---- */
+.schedule-table-wrap {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.schedule-table-header {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 6px 0;
+}
+
+.schedule-th-hour {
+    flex: 0 0 52px;
+    text-align: center;
+    border-right: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.schedule-th-min {
+    flex: 1;
+    text-align: center;
+    padding-left: 8px;
+}
+
+.schedule-table {
+    display: flex;
+    flex-direction: column;
+    background: white;
+}
+
+.schedule-row {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.15s;
+}
+
+.schedule-row:last-child {
+    border-bottom: none;
+}
+
+.schedule-row:hover {
+    background: #fafafa;
+}
+
+.schedule-row.current-hour {
+    background: linear-gradient(90deg, #fff3e0 0%, #ffe0b2 100%);
+}
+
+.schedule-row.current-hour:hover {
+    background: linear-gradient(90deg, #ffe0b2 0%, #ffcc80 100%);
+}
+
+/* Komórka godziny */
+.schedule-hour {
+    flex: 0 0 52px;
+    background: #fafafa;
+    color: #d32f2f;
+    font-family: "Courier New", "Consolas", monospace;
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 2px solid #d32f2f;
+    padding: 8px 0;
+}
+
+.schedule-row.current-hour .schedule-hour {
+    background: #ffe0b2;
+    color: #bf360c;
+    border-right-color: #bf360c;
+}
+
+.schedule-hour sup {
+    font-size: 14px;
+    margin-left: 1px;
+    font-weight: 400;
+}
+
+/* Komórka z minutami */
+.schedule-minutes {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 8px 10px;
+    align-items: center;
+}
+
+.schedule-min {
+    color: #222;
+    font-family: "Courier New", "Consolas", monospace;
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 26px;
+    text-align: center;
+    padding: 3px 6px;
+    border-radius: 4px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    position: relative;
+    transition: all 0.15s;
+}
+
+.schedule-min:hover {
+    border-color: #1976d2;
+    transform: scale(1.05);
+}
+
+.schedule-min.past {
+    color: #bbb;
+    text-decoration: line-through;
+    background: #f5f5f5;
+    border-color: #eee;
+}
+
+.schedule-min.past:hover {
+    transform: none;
+    border-color: #eee;
+}
+
+.schedule-min.next {
+    background: linear-gradient(135deg, #ff5722 0%, #e64a19 100%);
+    color: white;
+    border-color: #ff5722;
+    box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.25);
+    animation: nextPulse 1.8s infinite;
+}
+
+.schedule-min.next:hover {
+    transform: scale(1.1);
+}
+
+@keyframes nextPulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.25);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(255, 87, 34, 0.05);
+    }
+}
+
+/* Litery wariantów */
+.schedule-letter {
+    font-size: 9px;
+    color: #1976d2;
+    font-weight: 700;
+    margin-left: 1px;
+    vertical-align: super;
+    background: rgba(25, 118, 210, 0.1);
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+.schedule-min.next .schedule-letter {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.schedule-min.past .schedule-letter {
+    color: #ccc;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* ---- Legenda ---- */
+.schedule-legend {
+    margin-top: 14px;
+    padding: 10px 12px;
+    background: linear-gradient(135deg, #f9f9f9 0%, #f0f0f0 100%);
+    border-radius: 6px;
+    border-left: 4px solid #1976d2;
+}
+
+.schedule-legend-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #555;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.schedule-legend-title::before {
+    content: "ℹ️";
+}
+
+.legend-item {
+    font-size: 11px;
+    color: #444;
+    padding: 3px 0;
+    line-height: 1.4;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.legend-item sup {
+    color: #1976d2;
+    font-weight: 700;
+    font-size: 10px;
+    background: white;
+    padding: 1px 5px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    flex-shrink: 0;
+    min-width: 16px;
+    text-align: center;
+    vertical-align: baseline;
+}
+
+/* ---- Stany ---- */
+.popup-schedule-loading,
+.popup-schedule-empty {
+    text-align: center;
+    color: #888;
+    padding: 28px 0;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.popup-schedule-loading {
+    animation: loadingPulse 1.5s infinite;
+}
+
+@keyframes loadingPulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}

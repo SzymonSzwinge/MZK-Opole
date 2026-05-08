@@ -1,0 +1,16 @@
+/* ============================================
+   BASE — reset, globalne style
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body,
+html {
+    font-family: system-ui, -apple-system, sans-serif;
+    overflow: hidden;
+    transition: background 0.3s;
+}

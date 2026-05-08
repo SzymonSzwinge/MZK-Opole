@@ -1,0 +1,26 @@
+/* ============================================
+   GEOLOCATION — przycisk lokalizacji
+   ============================================ */
+
+.geo-button {
+    width: 100%;
+    padding: 9px;
+    background: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background 0.2s;
+}
+
+.geo-button:hover {
+    background: #1565c0;
+}
+
+.geo-button:disabled {
+    background: #ccc;
+    cursor: wait;
+}

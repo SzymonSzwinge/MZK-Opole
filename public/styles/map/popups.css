@@ -1,0 +1,300 @@
+/* ============================================
+   POPUPS — Leaflet popup + odjazdy
+   ============================================ */
+
+.leaflet-popup-content {
+    font-size: 13px;
+    line-height: 1.5;
+    min-width: 240px;
+}
+
+.leaflet-popup-content b {
+    color: #d32f2f;
+}
+
+/* Wiersz popup */
+.popup-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+}
+
+/* Badge linii */
+.popup-line-badge {
+    display: inline-block;
+    background: #1976d2;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-right: 6px;
+}
+
+.popup-line-badge.night {
+    background: #6a1b9a;
+}
+
+/* Cechy pojazdu */
+.popup-features {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 16px;
+}
+
+/* Opóźnienia */
+.delay-positive {
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+.delay-negative {
+    color: #f57c00;
+    font-weight: bold;
+}
+
+.delay-ok {
+    color: #388e3c;
+    font-weight: bold;
+}
+
+/* Przyciski "Jadę z" / "Jadę do" */
+.popup-trip-buttons {
+    display: flex;
+    gap: 6px;
+    margin: 8px 0;
+}
+
+.popup-trip-btn {
+    flex: 1;
+    padding: 5px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.popup-trip-btn.from-btn {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.popup-trip-btn.from-btn:hover {
+    background: #c8e6c9;
+}
+
+.popup-trip-btn.to-btn {
+    background: #fce4ec;
+    color: #c62828;
+}
+
+.popup-trip-btn.to-btn:hover {
+    background: #f8bbd0;
+}
+
+/* ---- Nagłówek sekcji odjazdów ---- */
+.dep-section-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    margin-bottom: 6px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #d32f2f;
+    font-size: 12px;
+    font-weight: bold;
+    color: #d32f2f;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dep-count {
+    background: #d32f2f;
+    color: white;
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: bold;
+    margin-left: auto;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+/* ---- Lista odjazdów ---- */
+.dep-list {
+    list-style: none;
+    margin: 8px 0 0 0;
+    padding: 0;
+}
+
+.dep-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 4px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.15s;
+}
+
+.dep-list li:hover {
+    background: #fff3e0;
+}
+
+.dep-list li:last-child {
+    border-bottom: none;
+}
+
+/* Badge linii w odjazdach */
+.dep-line {
+    background: #1976d2;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 12px;
+    min-width: 32px;
+    text-align: center;
+}
+
+.dep-line.night {
+    background: #6a1b9a;
+}
+
+/* Info odjazdu */
+.dep-info {
+    flex: 1;
+    font-size: 12px;
+}
+
+.dep-direction {
+    color: #333;
+    font-weight: 500;
+}
+
+.dep-vehicle {
+    color: #999;
+    font-size: 10px;
+    margin-top: 1px;
+}
+
+/* Czas odjazdu */
+.dep-time-block {
+    text-align: right;
+    font-size: 12px;
+}
+
+.dep-minutes {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.dep-minutes.now {
+    color: #d32f2f;
+}
+
+.dep-minutes.soon {
+    color: #f57c00;
+}
+
+.dep-minutes.far {
+    color: #1976d2;
+    font-size: 13px;
+}
+
+.dep-clock {
+    color: #888;
+    font-size: 11px;
+}
+
+/* Tagi opóźnień */
+.dep-delay-tag {
+    font-size: 10px;
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin-top: 2px;
+    display: inline-block;
+}
+
+.dep-delay-tag.late {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.dep-delay-tag.early {
+    background: #fff3e0;
+    color: #ef6c00;
+}
+
+.dep-delay-tag.schedule {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.dep-stopped {
+    background: #c8e6c9;
+    color: #2e7d32;
+    font-size: 10px;
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin-left: 4px;
+}
+
+.dep-loading {
+    text-align: center;
+    color: #888;
+    padding: 12px 0;
+    font-size: 12px;
+}
+
+/* Etykieta dnia (jutro / pojutrze) */
+.dep-day-label {
+    display: inline-block;
+    background: #e3f2fd;
+    color: #1565c0;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+.dep-day-label.tomorrow {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+/* ---- Karta pojazdu (popup) ---- */
+.popup-bus-header {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.popup-features-list {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+}
+
+.popup-feature-row {
+    padding: 3px 0;
+    font-size: 12px;
+    color: #444;
+}
+
+.popup-feature-row b {
+    color: inherit;
+    font-weight: 600;
+}
+
+.popup-feature-row.popup-feature-no {
+    color: #999;
+    font-style: italic;
+}

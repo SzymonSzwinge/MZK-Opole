@@ -1,0 +1,460 @@
+/* ============================================
+   DARK MODE — tryb ciemny
+   ============================================ */
+
+/* ---- Base ---- */
+body.dark {
+    background: #1a1a1a;
+}
+
+/* ---- Sidebar panel ---- */
+body.dark #sidebar-panel {
+    background: #2a2a2a;
+    color: #e0e0e0;
+}
+
+body.dark .panel-header {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+}
+
+body.dark .panel-header h2 {
+    color: #e0e0e0;
+}
+
+body.dark .panel-close {
+    color: #aaa;
+}
+
+body.dark .panel-close:hover {
+    background: #3a3a3a;
+    color: #fff;
+}
+
+body.dark .counter-detail {
+    color: #aaa;
+    border-color: #3a3a3a;
+}
+
+/* ---- Inputs ---- */
+body.dark #search,
+body.dark .trip-input-wrapper input {
+    background: #1f1f1f;
+    color: #e0e0e0;
+    border-color: #3a3a3a;
+}
+
+body.dark .trip-input-wrapper input.set {
+    background: #1b3320;
+    border-color: #2e7d32;
+}
+
+body.dark .trip-input-group label {
+    color: #aaa;
+}
+
+body.dark .trip-clear-btn {
+    background: #3a3a3a;
+    color: #aaa;
+}
+
+body.dark .trip-clear-btn:hover {
+    background: #4a4a4a;
+    color: #fff;
+}
+
+body.dark .trip-pick-btn {
+    background: #3a3a3a;
+    color: #aaa;
+}
+
+body.dark .trip-pick-btn:hover {
+    background: #4a4a4a;
+    color: #fff;
+}
+
+/* ---- Suggestions ---- */
+body.dark .suggestions-dropdown {
+    background: #1f1f1f;
+    border-color: #3a3a3a;
+}
+
+body.dark .suggestion-item {
+    border-color: #2a2a2a;
+}
+
+body.dark .suggestion-item:hover {
+    background: #2a2a2a;
+}
+
+body.dark .suggestion-name {
+    color: #e0e0e0;
+}
+
+/* ---- Trip results ---- */
+body.dark .trip-result {
+    background: #1f1f1f;
+    border-color: #3a3a3a;
+}
+
+body.dark .trip-result:hover {
+    background: #2a2520;
+    border-color: #ff9800;
+}
+
+body.dark .trip-result-direction {
+    color: #ccc;
+}
+
+body.dark .trip-result-times {
+    color: #e0e0e0;
+}
+
+body.dark .trip-loading,
+body.dark .trip-no-results {
+    color: #aaa;
+}
+
+body.dark .trip-result-duration {
+    background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+    color: #c8e6c9;
+}
+
+body.dark .trip-day-label {
+    background: #1565c0;
+}
+
+body.dark .trip-day-label.tomorrow {
+    background: #f57c00;
+}
+
+body.dark .trip-countdown.far {
+    color: #64b5f6;
+}
+
+body.dark .trip-result-status.status-scheduled {
+    background: #1a3a5a;
+    color: #64b5f6;
+}
+
+/* ---- Filter toggles ---- */
+body.dark .filter-toggles {
+    color: #ccc;
+}
+
+/* ---- Lines divider ---- */
+body.dark .lines-divider {
+    color: #aaa;
+}
+
+/* ---- Popups ---- */
+body.dark .leaflet-popup-content-wrapper {
+    background: #2a2a2a;
+    color: #e0e0e0;
+}
+
+body.dark .leaflet-popup-tip {
+    background: #2a2a2a;
+}
+
+body.dark .leaflet-popup-content b {
+    color: #ff7043;
+}
+
+body.dark .dep-list li {
+    border-color: #3a3a3a;
+}
+
+body.dark .dep-list li:hover {
+    background: #2a2520;
+}
+
+body.dark .dep-direction {
+    color: #e0e0e0;
+}
+
+body.dark .dep-clock {
+    color: #aaa;
+}
+
+body.dark .dep-minutes.far {
+    color: #64b5f6;
+}
+
+body.dark .dep-day-label {
+    background: #1a3a5a;
+    color: #64b5f6;
+}
+
+body.dark .dep-day-label.tomorrow {
+    background: #3a2520;
+    color: #ffab91;
+}
+
+body.dark .dep-delay-tag.schedule {
+    background: #1a3a5a;
+    color: #64b5f6;
+}
+
+body.dark .dep-section-header {
+    color: #ff7043;
+    border-color: #ff7043;
+}
+
+body.dark .dep-count {
+    background: #ff7043;
+    color: white;
+}
+
+/* ---- Popup trip buttons ---- */
+body.dark .popup-trip-btn.from-btn {
+    background: #1b3320;
+    color: #81c784;
+}
+
+body.dark .popup-trip-btn.from-btn:hover {
+    background: #2e4a32;
+}
+
+body.dark .popup-trip-btn.to-btn {
+    background: #3e1c24;
+    color: #ef9a9a;
+}
+
+body.dark .popup-trip-btn.to-btn:hover {
+    background: #4e2c34;
+}
+
+/* ---- Popup bus card ---- */
+body.dark .popup-bus-header {
+    border-color: #3a3a3a;
+}
+
+body.dark .popup-features-list {
+    border-color: #3a3a3a;
+}
+
+body.dark .popup-feature-row {
+    color: #ccc;
+}
+
+body.dark .popup-feature-row.popup-feature-no {
+    color: #777;
+}
+
+/* ---- Schedule ---- */
+body.dark .popup-schedule-btn {
+    background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+body.dark .popup-schedule-btn:hover {
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+}
+
+body.dark .popup-schedule-panel {
+    border-color: #3a3a3a;
+    scrollbar-color: #4a4a4a transparent;
+}
+
+body.dark .popup-schedule-panel::-webkit-scrollbar-thumb {
+    background: #4a4a4a;
+}
+
+body.dark .popup-schedule-panel::-webkit-scrollbar-thumb:hover {
+    background: #6a6a6a;
+}
+
+body.dark .popup-schedule-header {
+    border-color: #ff7043;
+    background: #2a2a2a;
+}
+
+body.dark .popup-schedule-header h4 {
+    color: #ff7043;
+}
+
+body.dark .schedule-reset-btn {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+    color: #aaa;
+}
+
+body.dark .schedule-reset-btn:hover {
+    background: #1976d2;
+    color: white;
+    border-color: #1976d2;
+}
+
+body.dark .popup-schedule-close {
+    color: #aaa;
+}
+
+body.dark .popup-schedule-close:hover {
+    background: #3e1c24;
+    color: #ff7043;
+}
+
+body.dark .schedule-date-nav {
+    background: linear-gradient(135deg, #1f1f1f 0%, #252525 100%);
+    border-color: #3a3a3a;
+}
+
+body.dark .schedule-nav-btn {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+    color: #ff7043;
+}
+
+body.dark .schedule-nav-btn:hover {
+    background: #ff7043;
+    color: white;
+    border-color: #ff7043;
+}
+
+body.dark .schedule-day-badge {
+    background: #2a2a2a;
+    color: #aaa;
+}
+
+body.dark .schedule-day-badge.today {
+    background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+    color: white;
+}
+
+body.dark .schedule-date-main {
+    color: #e0e0e0;
+}
+
+body.dark .schedule-line-header {
+    background: linear-gradient(90deg, #1f1f1f 0%, transparent 100%);
+}
+
+body.dark .schedule-line-direction {
+    color: #ddd;
+}
+
+body.dark .schedule-table-wrap {
+    border-color: #3a3a3a;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .schedule-table {
+    background: #1f1f1f;
+}
+
+body.dark .schedule-row {
+    border-color: #2a2a2a;
+}
+
+body.dark .schedule-row:hover {
+    background: #252525;
+}
+
+body.dark .schedule-row.current-hour {
+    background: linear-gradient(90deg, #2a2520 0%, #3a2a20 100%);
+}
+
+body.dark .schedule-row.current-hour:hover {
+    background: linear-gradient(90deg, #3a2a20 0%, #4a3525 100%);
+}
+
+body.dark .schedule-hour {
+    background: #252525;
+    color: #ff7043;
+    border-right-color: #ff7043;
+}
+
+body.dark .schedule-row.current-hour .schedule-hour {
+    background: #3a2a20;
+    color: #ffab91;
+    border-right-color: #ffab91;
+}
+
+body.dark .schedule-min {
+    background: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #3a3a3a;
+}
+
+body.dark .schedule-min:hover {
+    border-color: #64b5f6;
+}
+
+body.dark .schedule-min.past {
+    background: #1a1a1a;
+    color: #555;
+    border-color: #2a2a2a;
+}
+
+body.dark .schedule-letter {
+    color: #64b5f6;
+    background: rgba(100, 181, 246, 0.15);
+}
+
+body.dark .schedule-min.past .schedule-letter {
+    color: #555;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+body.dark .schedule-legend {
+    background: linear-gradient(135deg, #1f1f1f 0%, #252525 100%);
+    border-left-color: #64b5f6;
+}
+
+body.dark .schedule-legend-title {
+    color: #aaa;
+}
+
+body.dark .legend-item {
+    color: #ccc;
+}
+
+body.dark .legend-item sup {
+    background: #2a2a2a;
+    color: #64b5f6;
+    border-color: #3a3a3a;
+}
+
+body.dark .popup-schedule-loading,
+body.dark .popup-schedule-empty {
+    color: #aaa;
+}
+
+/* ---- Toast (dark) ---- */
+body.dark .trip-notice .trip-notice-clear {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+body.dark .trip-notice .trip-notice-clear:hover {
+    background: rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* ---- Reachable (dark) ---- */
+body.dark .reachable-loading {
+    background: #2a2520;
+    color: #ffab91;
+    border-left-color: #ff9800;
+}
+
+body.dark .reachable-active {
+    background: linear-gradient(135deg, #1b3320 0%, #2e4a32 100%);
+    color: #a5d6a7;
+    border-left-color: #4caf50;
+}
+
+body.dark .reachable-active b {
+    color: #c8e6c9;
+}
+
+body.dark .reachable-active button {
+    background: rgba(165, 214, 167, 0.15);
+    color: #a5d6a7;
+}
+
+body.dark .reachable-active button:hover {
+    background: #d32f2f;
+    color: white;
+}

@@ -1,0 +1,48 @@
+/* ============================================
+   LINES — chipy linii + separator
+   ============================================ */
+
+#lines-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.line-chip {
+    background: #1976d2;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.line-chip:hover {
+    transform: scale(1.05);
+}
+
+.line-chip.active {
+    background: #ff5722;
+    box-shadow: 0 0 0 2px rgba(255, 87, 34, 0.3);
+}
+
+.line-chip.night {
+    background: #6a1b9a;
+}
+
+.line-chip.night.active {
+    background: #ff5722;
+}
+
+/* Separator grup linii */
+.lines-divider {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #888;
+    letter-spacing: 0.5px;
+    margin: 14px 0 8px 0;
+    transition: color 0.3s;
+}

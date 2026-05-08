@@ -1,0 +1,136 @@
+/* ============================================
+   MARKERS — ikony na mapie
+   ============================================ */
+
+/* ---- Autobus ---- */
+.bus-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+    cursor: pointer;
+}
+
+.bus-marker svg {
+    width: 32px;
+    height: 32px;
+}
+
+.bus-label {
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1976d2;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.bus-label.night {
+    background: #6a1b9a;
+}
+
+.bus-label.delayed {
+    background: #d32f2f;
+}
+
+/* ---- Przystanek (SVG) ---- */
+.stop-icon-wrapper {
+    background: transparent !important;
+    border: none !important;
+}
+
+.stop-marker-svg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.stop-marker-svg svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.stop-marker-svg:hover {
+    transform: scale(1.2);
+}
+
+/* ---- Marker podróży (from / to) ---- */
+.trip-marker {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.trip-marker.from {
+    background: #4caf50;
+}
+
+.trip-marker.to {
+    background: #d32f2f;
+}
+
+/* ---- Lokalizacja użytkownika ---- */
+.user-location-marker {
+    width: 18px;
+    height: 18px;
+    background: #2196f3;
+    border: 3px solid white;
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 3px rgba(33, 150, 243, 0.3),
+        0 2px 8px rgba(0, 0, 0, 0.3);
+    animation: locationPulse 2s infinite;
+}
+
+@keyframes locationPulse {
+    0%,
+    100% {
+        box-shadow:
+            0 0 0 3px rgba(33, 150, 243, 0.3),
+            0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    50% {
+        box-shadow:
+            0 0 0 8px rgba(33, 150, 243, 0.15),
+            0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* ---- Picking mode ---- */
+body.picking-stop #map {
+    cursor: crosshair;
+}
+
+body.picking-stop .stop-marker {
+    transform: scale(1.5);
+    box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.5);
+}
+
+body.picking-stop .stop-marker-svg {
+    transform: scale(1.4);
+    filter: drop-shadow(0 0 6px rgba(255, 152, 0, 0.8));
+}
+
+body.picking-stop .stop-marker-svg:hover {
+    transform: scale(1.6);
+}

@@ -1,0 +1,137 @@
+/* ============================================
+   TOAST — powiadomienia (filter + trip)
+   ============================================ */
+
+/* ---- Filter notice ---- */
+.filter-notice {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #ff5722;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.filter-notice.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#filter-notice-clear {
+    background: rgba(255, 255, 255, 0.25);
+    border: none;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#filter-notice-clear:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* ---- Trip notice ---- */
+.trip-notice {
+    gap: 12px;
+    padding: 10px 14px;
+    min-width: 280px;
+    max-width: 90vw;
+    transition:
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.3s ease,
+        bottom 0.3s ease;
+}
+
+.trip-notice > span:nth-of-type(2) {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.trip-notice .trip-notice-clear {
+    background: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.trip-notice .trip-notice-clear:hover {
+    background: rgba(255, 255, 255, 0.4);
+    border-color: rgba(255, 255, 255, 0.7);
+    transform: translateY(-1px);
+}
+
+.trip-notice .trip-notice-clear:active {
+    transform: translateY(0);
+}
+
+/* Warianty kolorystyczne */
+.trip-notice.from {
+    background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+    bottom: 80px;
+}
+
+.trip-notice.to {
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    bottom: 20px;
+}
+
+.trip-notice.plan {
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+    bottom: 20px;
+}
+
+/* Pozycja gdy sam "from" */
+.trip-notice.from.visible:not(:has(~ .trip-notice.to.visible)) {
+    bottom: 20px;
+}
+
+/* Pulsowanie */
+.trip-notice.to.visible:has(.trip-notice-clear) {
+    animation: tripNoticePulse 2.5s infinite;
+}
+
+@keyframes tripNoticePulse {
+    0%,
+    100% {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    50% {
+        box-shadow: 0 4px 20px rgba(255, 152, 0, 0.5);
+    }
+}
+
+/* Reachable loading / active */
+/* .reachable-loading { */
+    /* style bazowe — brak w oryginale, tylko dark */
+/* }
+
+.reachable-active { */
+    /* style bazowe — brak w oryginale, tylko dark */
+/* } */

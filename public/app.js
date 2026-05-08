@@ -62,6 +62,8 @@ let lastTripResults = [];
 let pickingMode = null; // null | "from" | "to"
 let reachableStopsFromOrigin = null;
 let isLoadingReachable = false;
+let reachableStopsToDestination = null; // Set: z jakich przystanków można dojechać do celu
+let isLoadingReverseReachable = false;
 
 // linia → przystanki (cache)
 const lineStopsCache = new Map();
@@ -346,32 +348,50 @@ window._showDepRoute = function (courseId, variantId, orderInCourse, vehicleId) 
     showVehicleRoute({ courseId, variantId, orderInCourse, vehicleId });
 };
 
-window._setTripFrom = function (symbol, name) {
+window._setTripFrom = async function (symbol, name) {
     tripFrom = { symbol, name };
     const input = document.getElementById("trip-from-input");
     input.value = name;
     input.classList.add("set");
     map.closePopup();
+    
+    // Wyłącz tryb wybierania jeśli aktywny
+    if (pickingMode === "from") {
+        stopPicking();
+    }
+    
+    // Pre-load osiągalnych w tle
+    await loadReachableStops(symbol);
+    
+    // Jeśli nie mamy celu - od razu filtruj mapę żeby pokazać tylko osiągalne
+    if (!tripTo) {
+        applyReachableFilter();
+    }
+    
     updateTripMarkers();
-    
-    // Pre-load osiągalnych w tle (żeby było gotowe gdy user kliknie "wybieram B")
-    loadReachableStops(symbol);
-    
     updateTripNotices();
     
     if (tripTo) searchTrip();
 };
 
-window._setTripTo = function (symbol, name) {
+window._setTripTo = async function (symbol, name) {
     tripTo = { symbol, name };
     const input = document.getElementById("trip-to-input");
     input.value = name;
     input.classList.add("set");
     map.closePopup();
     
-    // Wyłącz tryb wybierania
+    // Wyłącz tryb wybierania jeśli aktywny
     if (pickingMode === "to") {
         stopPicking();
+    }
+    
+    // Załaduj reverse reachable (z jakich przystanków da się tu dojechać)
+    await loadReverseReachableStops(symbol);
+    
+    // Jeśli nie mamy startu - od razu filtruj mapę żeby pokazać tylko przystanki źródłowe
+    if (!tripFrom) {
+        applyReachableFilter();
     }
     
     updateTripMarkers();
@@ -507,7 +527,7 @@ function renderScheduleHeader(symbol, dateMs) {
     // Przycisk reset (tylko gdy nie jesteśmy na dziś)
     const resetBtn = isToday
         ? ""
-        : `<button class="schedule-reset-btn" onclick="event.stopPropagation(); window._setScheduleToday('${symbol}')" title="Wróć do dzisiejszej daty">↺ Reset</button>`;
+        : `<button class="schedule-reset-btn" onclick="event.stopPropagation(); window._setScheduleToday('${symbol}')" title="Wróć do dzisiejszej daty">↺ Powrót</button>`;
 
     return `
         <div class="popup-schedule-header">
@@ -1020,6 +1040,8 @@ function showReachableLoading(loading) {
 }
 
 
+// app.js - ZAMIEŃ updateTripNotices na:
+
 function updateTripNotices() {
     const noticeFrom = document.getElementById("trip-notice-from");
     const noticeTo = document.getElementById("trip-notice-to");
@@ -1029,19 +1051,21 @@ function updateTripNotices() {
     noticeTo.classList.remove("visible");
     noticePlan.classList.remove("visible");
 
-    if (tripFrom && tripTo) {
+    // Oba wybrane - pokaż trasę
+    if (tripFrom && tripTo && !pickingMode) {
         document.getElementById("trip-notice-plan-text").innerHTML = 
             `Trasa: <b>${tripFrom.name}</b> → <b>${tripTo.name}</b>`;
         noticePlan.classList.add("visible");
         return;
     }
 
+    // Picking TO
     if (pickingMode === "to") {
         let text = "Wybieranie celu podróży...";
         if (isLoadingReachable) {
             text = "⏳ Analizuję trasy linii (5-15 sek)...";
-        } else if (reachableStopsFromOrigin) {
-            const count = reachableStopsFromOrigin.size - 1;
+        } else if (tripFrom && reachableStopsFromOrigin) {
+            const count = Math.max(0, reachableStopsFromOrigin.size - 1);
             text = `Wybierz cel z mapy (${count} dostępnych przystanków)`;
         }
         noticeTo.querySelector("span:nth-of-type(2)").textContent = text;
@@ -1054,16 +1078,37 @@ function updateTripNotices() {
         return;
     }
 
+    // Picking FROM
     if (pickingMode === "from") {
-        document.getElementById("trip-notice-from-text").textContent = "Wybierz start z mapy...";
+        let text = "Wybieranie startu podróży...";
+        if (isLoadingReverseReachable) {
+            text = "⏳ Analizuję trasy do celu (5-15 sek)...";
+        } else if (tripTo && reachableStopsToDestination) {
+            const count = Math.max(0, reachableStopsToDestination.size - 1);
+            text = `Wybierz start z mapy (${count} przystanków do ${tripTo.name})`;
+        }
+        document.getElementById("trip-notice-from-text").textContent = text;
+        noticeFrom.classList.add("visible");
+        if (tripTo) {
+            noticeTo.querySelector("span:nth-of-type(2)").innerHTML = `Cel: <b>${tripTo.name}</b>`;
+            noticeTo.classList.add("visible");
+        }
+        return;
+    }
+
+    // Tylko start wybrany (bez pickingu)
+    if (tripFrom && !tripTo) {
+        document.getElementById("trip-notice-from-text").innerHTML = 
+            `Start: <b>${tripFrom.name}</b> — wybierz cel`;
         noticeFrom.classList.add("visible");
         return;
     }
 
-    if (tripFrom && !tripTo) {
-        document.getElementById("trip-notice-from-text").innerHTML = 
-            `Start: <b>${tripFrom.name}</b>`;
-        noticeFrom.classList.add("visible");
+    // Tylko cel wybrany (bez pickingu)
+    if (!tripFrom && tripTo) {
+        noticeTo.querySelector("span:nth-of-type(2)").innerHTML = 
+            `Cel: <b>${tripTo.name}</b> — wybierz start`;
+        noticeTo.classList.add("visible");
         return;
     }
 }
@@ -1092,26 +1137,42 @@ async function loadReachableStops(fromSymbol) {
     }
 }
 
+// app.js - ZAMIEŃ applyReachableFilter na:
+
 function applyReachableFilter() {
     stopsCluster.clearLayers();
 
     let markersToAdd;
+    let filterSet = null;
     
-    // Filtr aktywny TYLKO gdy: jesteśmy w trybie "to" + mamy listę osiągalnych
-    const filterActive = pickingMode === "to" && reachableStopsFromOrigin && reachableStopsFromOrigin.size > 1;
+    // Picking "from" + mamy cel: pokaż tylko przystanki z których da się dojechać do B
+    if (pickingMode === "from" && reachableStopsToDestination && reachableStopsToDestination.size > 1) {
+        filterSet = reachableStopsToDestination;
+    }
+    // Picking "to" + mamy start: pokaż tylko przystanki do których da się dojechać z A
+    else if (pickingMode === "to" && reachableStopsFromOrigin && reachableStopsFromOrigin.size > 1) {
+        filterSet = reachableStopsFromOrigin;
+    }
+    // Mamy tylko cel (bez startu, nie picking): pokaż skąd da się dojechać
+    else if (!tripFrom && tripTo && reachableStopsToDestination && reachableStopsToDestination.size > 1 && !pickingMode) {
+        filterSet = reachableStopsToDestination;
+    }
+    // Mamy tylko start (bez celu, nie picking): pokaż dokąd da się dojechać
+    else if (tripFrom && !tripTo && reachableStopsFromOrigin && reachableStopsFromOrigin.size > 1 && !pickingMode) {
+        filterSet = reachableStopsFromOrigin;
+    }
     
-    if (filterActive) {
+    if (filterSet) {
         markersToAdd = [];
         for (const marker of stopMarkers.values()) {
             const symbol = marker.stopData?.symbol;
-            if (symbol && reachableStopsFromOrigin.has(symbol)) {
+            if (symbol && filterSet.has(symbol)) {
                 markersToAdd.push(marker);
             }
         }
-        console.log(`Filtr aktywny: pokazuję ${markersToAdd.length} osiągalnych przystanków`);
+        console.log(`Filtr aktywny: pokazuję ${markersToAdd.length} z ${stopMarkers.size} przystanków`);
     } else {
         markersToAdd = Array.from(stopMarkers.values());
-        console.log(`Filtr nieaktywny: pokazuję wszystkie ${markersToAdd.length} przystanków`);
     }
 
     stopsCluster.addLayers(markersToAdd, { chunkedLoading: false });
@@ -1360,6 +1421,8 @@ document.getElementById("geo-btn").addEventListener("click", () => {
 function setupStopSearch(inputId, suggestionsId, callback) {
     const input = document.getElementById(inputId);
     const dropdown = document.getElementById(suggestionsId);
+    const isFromInput = inputId === "trip-from-input";
+    const isToInput = inputId === "trip-to-input";
 
     input.addEventListener("input", () => {
         const q = input.value.trim().toLowerCase();
@@ -1371,7 +1434,20 @@ function setupStopSearch(inputId, suggestionsId, callback) {
                 const key = `${s.name}_${s.symbol}`;
                 if (seen.has(key)) return false;
                 seen.add(key);
-                return s.name.toLowerCase().includes(q) || (s.street && s.street.toLowerCase().includes(q));
+                
+                // Filtruj po nazwie/ulicy
+                const matchesText = s.name.toLowerCase().includes(q) || (s.street && s.street.toLowerCase().includes(q));
+                if (!matchesText) return false;
+                
+                // Filtruj po osiągalności
+                if (isToInput && reachableStopsFromOrigin && reachableStopsFromOrigin.size > 1) {
+                    if (!reachableStopsFromOrigin.has(s.symbol)) return false;
+                }
+                if (isFromInput && reachableStopsToDestination && reachableStopsToDestination.size > 1) {
+                    if (!reachableStopsToDestination.has(s.symbol)) return false;
+                }
+                
+                return true;
             })
             .slice(0, 6);
 
@@ -1531,7 +1607,31 @@ function renderTripResults() {
         renderTripResults();
     }, COUNTDOWN_REFRESH_MS);
 }
+// app.js - DODAJ nową funkcję loadReverseReachableStops
 
+async function loadReverseReachableStops(toSymbol) {
+    if (!toSymbol) {
+        reachableStopsToDestination = null;
+        return;
+    }
+
+    isLoadingReverseReachable = true;
+    updateTripNotices();
+
+    try {
+        const res = await fetch(`/api/stop/${encodeURIComponent(toSymbol)}/reachable-to`);
+        const symbols = await res.json();
+        reachableStopsToDestination = new Set(symbols);
+        reachableStopsToDestination.add(toSymbol); // dodaj sam cel
+        console.log(`Przystanki źródłowe do ${toSymbol}: ${symbols.length}`);
+    } catch (err) {
+        console.error("Błąd ładowania reverse reachable:", err);
+        reachableStopsToDestination = null;
+    } finally {
+        isLoadingReverseReachable = false;
+        updateTripNotices();
+    }
+}
 function renderResultsFilter() {
     const hasNight = lastTripResults.some((r) => r.nightLine);
     if (!hasNight) return "";
@@ -1611,40 +1711,41 @@ async function startPicking(mode) {
         return;
     }
 
-    if (mode === "to" && !tripFrom) {
-        alert("Najpierw wybierz przystanek startowy (A)");
-        return;
-    }
-
     pickingMode = mode;
     document.body.classList.add("picking-stop");
     
     document.getElementById("trip-from-pick").classList.toggle("choosing", mode === "from");
     document.getElementById("trip-to-pick").classList.toggle("choosing", mode === "to");
 
-    // Jeśli wybieramy "to" - upewnij się że mamy listę osiągalnych
-    if (mode === "to") {
-        // Jeśli jeszcze nie mamy listy (lub jest pusta) - załaduj teraz i czekaj
+    if (mode === "to" && tripFrom) {
+        // Mamy start - filtruj do osiągalnych z A
         if (!reachableStopsFromOrigin || reachableStopsFromOrigin.size <= 1) {
-            updateTripNotices(); // pokaż "ładuję..."
+            updateTripNotices();
             await loadReachableStops(tripFrom.symbol);
         }
-        // Teraz na pewno mamy listę - zastosuj filtr
+        applyReachableFilter();
+    } else if (mode === "from" && tripTo) {
+        // Mamy cel - filtruj do przystanków z których da się dojechać do B
+        if (!reachableStopsToDestination || reachableStopsToDestination.size <= 1) {
+            updateTripNotices();
+            await loadReverseReachableStops(tripTo.symbol);
+        }
         applyReachableFilter();
     }
+    // Jeśli nie mamy drugiego punktu - pokaż wszystkie (bez filtra)
 
     updateTripNotices();
 }
 
 function stopPicking() {
-    const wasPickingTo = pickingMode === "to";
+    const wasPicking = pickingMode !== null;
     pickingMode = null;
     document.body.classList.remove("picking-stop");
     document.getElementById("trip-from-pick").classList.remove("choosing");
     document.getElementById("trip-to-pick").classList.remove("choosing");
 
     // Przywróć wszystkie przystanki na mapie
-    if (wasPickingTo) {
+    if (wasPicking) {
         applyReachableFilter();
     }
 
@@ -1735,18 +1836,12 @@ document.getElementById("trip-from-clear").addEventListener("click", () => {
     lastTripResults = [];
     if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
     
-    // Wyczyść też B (bo bez A nie ma sensu)
-    tripTo = null;
-    const inputTo = document.getElementById("trip-to-input");
-    inputTo.value = "";
-    inputTo.classList.remove("set");
-    
-    // Reset filtra osiągalnych
+    // Reset reachable from origin
     reachableStopsFromOrigin = null;
     
-    // Wyłącz tryb pickingu jeśli aktywny
     if (pickingMode) stopPicking();
     
+    // NIE czyść B automatycznie - user może chcieć zostawić cel
     updateTripMarkers();
     applyReachableFilter();
     updateTripNotices();
@@ -1761,12 +1856,15 @@ document.getElementById("trip-to-clear").addEventListener("click", () => {
     lastTripResults = [];
     if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
     
-    if (pickingMode === "to") stopPicking();
+    // Reset reverse reachable
+    reachableStopsToDestination = null;
+    
+    if (pickingMode) stopPicking();
     
     updateTripMarkers();
+    applyReachableFilter();
     updateTripNotices();
 });
-
 setupStopSearch("trip-from-input", "trip-from-suggestions", (symbol, name) => {
     tripFrom = { symbol, name };
     updateTripMarkers();
