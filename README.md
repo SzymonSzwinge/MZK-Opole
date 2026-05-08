@@ -1,9 +1,8 @@
 # MZK-Opolepublic/
 ├── index.html
-├── app.js                          ← STARY (do usunięcia po migracji)
 ├── styles/
 └── js/
-    ├── app.js                      ← entry point
+    ├── app.js
     ├── config.js
     ├── state.js
     ├── utils.js
@@ -37,7 +36,6 @@
         └── geolocation.js
 
 server/
-├── api.js                          ← STARY (do usunięcia po migracji)
 ├── api/
 │   ├── index.js
 │   ├── client.js
@@ -63,3 +61,10 @@ server.js
 package.json
 package-lock.json
 README.md
+
+
+komunikaty z mzk:
+
+https://dip.mzkopole.pl/getAllMessages.json?preferredLanguage=pl
+
+https://dip.mzkopole.pl/getMessageCategories.json?preferredLanguage=pl

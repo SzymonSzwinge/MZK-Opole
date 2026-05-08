@@ -1,4 +1,3 @@
-// ========== ENTRY POINT ==========
 import { map } from "./map/mapInit.js";
 import { REFRESH_MS } from "./config.js";
 import { allLines } from "./state.js";
@@ -13,6 +12,7 @@ import { initFilterNotice } from "./ui/notices.js";
 import { initGeolocation } from "./ui/geolocation.js";
 import { initTripPlanner } from "./trip/planner.js";
 import { initStats } from "./stats/stats.js";
+import { initStaticPanels } from "./static/static.js";
 
 async function loadLines() {
     try {
@@ -32,6 +32,7 @@ initFilterNotice();
 initGeolocation();
 initTripPlanner();
 initStats();
+initStaticPanels();
 
 (async () => {
     await loadLines();

@@ -1,0 +1,669 @@
+.static-section {
+    margin-bottom: 22px;
+}
+
+.static-section h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #d32f2f;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #d32f2f;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.static-section h4 {
+    font-size: 12px;
+    font-weight: 700;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin: 14px 0 8px 0;
+}
+
+.static-note {
+    font-size: 11px;
+    color: #888;
+    font-style: italic;
+    margin-bottom: 8px;
+}
+
+.static-source {
+    font-size: 11px;
+    color: #888;
+    margin-top: 8px;
+    font-style: italic;
+}
+
+.static-callout {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    border-left: 4px solid #ff9800;
+    padding: 10px 12px;
+    border-radius: 0 6px 6px 0;
+    font-size: 12px;
+    color: #5d4037;
+    margin-top: 10px;
+    line-height: 1.5;
+}
+
+.static-callout.disclaimer {
+    background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
+    border-left-color: #9e9e9e;
+    color: #555;
+    font-style: italic;
+    font-size: 11px;
+}
+
+.muted {
+    color: #999;
+    font-style: italic;
+}
+
+.price-list,
+.discount-list,
+.steps-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    margin-bottom: 5px;
+    font-size: 12px;
+}
+
+.price-name {
+    color: #333;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.price-value {
+    font-weight: 700;
+    color: #d32f2f;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.discount-list li {
+    padding: 5px 0 5px 18px;
+    position: relative;
+    font-size: 12px;
+    color: #444;
+    line-height: 1.5;
+}
+
+.discount-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #388e3c;
+    font-weight: bold;
+}
+
+.steps-list li {
+    padding: 8px 0;
+    font-size: 12px;
+    color: #333;
+    line-height: 1.5;
+    border-bottom: 1px dashed #eee;
+}
+
+.steps-list li:last-child {
+    border-bottom: none;
+}
+
+.steps-list li b {
+    color: #d32f2f;
+    margin-right: 6px;
+}
+
+.channels-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.channel-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 10px 12px;
+}
+
+.channel-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    width: 32px;
+    text-align: center;
+}
+
+.channel-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.channel-name {
+    font-weight: 700;
+    font-size: 13px;
+    color: #222;
+    margin-bottom: 2px;
+}
+
+.channel-info {
+    font-size: 11px;
+    color: #666;
+    line-height: 1.4;
+    margin-bottom: 4px;
+}
+
+.channel-link {
+    display: inline-block;
+    font-size: 11px;
+    color: #1976d2;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.channel-link:hover {
+    text-decoration: underline;
+}
+
+.contact-card {
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.contact-card.subcard {
+    background: white;
+    border-left: 3px solid #d32f2f;
+    margin-left: 4px;
+}
+
+.contact-name {
+    font-weight: 700;
+    font-size: 13px;
+    color: #d32f2f;
+    margin-bottom: 4px;
+}
+
+.contact-address {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 6px;
+}
+
+.contact-line {
+    font-size: 12px;
+    color: #333;
+    padding: 3px 0;
+}
+
+.contact-line a {
+    color: #1976d2;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.contact-line a:hover {
+    text-decoration: underline;
+}
+
+.contact-info {
+    font-size: 11px;
+    color: #666;
+    line-height: 1.5;
+    margin-top: 4px;
+}
+
+.contact-link-main {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 11px;
+    color: #1976d2;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.contact-link-main:hover {
+    text-decoration: underline;
+}
+
+.info-meta-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 8px 0;
+    font-size: 12px;
+    color: #444;
+}
+
+.info-key {
+    display: inline-block;
+    color: #888;
+    margin-right: 4px;
+}
+
+/* Akordeony FAQ */
+.accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.accordion-item {
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.accordion-item.open {
+    border-color: #d32f2f;
+}
+
+.accordion-header {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 10px 12px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12px;
+    color: #333;
+    font-weight: 500;
+    transition: background 0.15s;
+}
+
+.accordion-header:hover {
+    background: #f0f0f0;
+}
+
+.accordion-item.open .accordion-header {
+    background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+    color: white;
+}
+
+.accordion-q {
+    flex: 1;
+}
+
+.accordion-arrow {
+    font-size: 16px;
+    color: #888;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+
+.accordion-item.open .accordion-arrow {
+    transform: rotate(90deg);
+    color: white;
+}
+
+.accordion-body {
+    display: none;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: #444;
+    line-height: 1.6;
+    background: white;
+    border-top: 1px solid #eee;
+}
+
+.accordion-item.open .accordion-body {
+    display: block;
+}
+
+.accordion-body ul {
+    margin: 6px 0;
+    padding-left: 18px;
+}
+
+.accordion-body ul li {
+    padding: 3px 0;
+}
+
+.accordion-body a {
+    color: #1976d2;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.accordion-body a:hover {
+    text-decoration: underline;
+}
+
+/* Legenda */
+.legend-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.legend-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.legend-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    width: 28px;
+    text-align: center;
+}
+
+.legend-text {
+    flex: 1;
+    color: #444;
+    line-height: 1.4;
+}
+/* ---- Tabela cennika ---- */
+.ticket-table {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.ticket-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 6px;
+}
+
+.ticket-row-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.ticket-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 2px;
+    line-height: 1.3;
+}
+
+.ticket-desc {
+    font-size: 10px;
+    color: #777;
+    line-height: 1.4;
+}
+
+.ticket-prices {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.ticket-price-cell {
+    text-align: center;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 4px 8px;
+    min-width: 52px;
+}
+
+.ticket-price-cell.ulga {
+    background: #e3f2fd;
+    border-color: #90caf9;
+}
+
+.ticket-price-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ticket-price-cell.ulga .ticket-price-label {
+    color: #1565c0;
+}
+
+.ticket-price-value {
+    font-size: 12px;
+    font-weight: 700;
+    color: #d32f2f;
+    font-variant-numeric: tabular-nums;
+    margin-top: 1px;
+}
+
+.ticket-price-cell.ulga .ticket-price-value {
+    color: #1565c0;
+}
+
+/* ---- Tabela kar ---- */
+.fines-table {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 8px;
+}
+
+.fine-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 12px;
+    background: #ffebee;
+    border: 1px solid #ffcdd2;
+    border-radius: 6px;
+}
+
+.fine-name {
+    flex: 1;
+    font-size: 11px;
+    color: #444;
+    line-height: 1.4;
+}
+
+.fine-price {
+    font-size: 13px;
+    font-weight: 700;
+    color: #c62828;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+/* ============================================
+   DARK MODE
+   ============================================ */
+
+body.dark .static-section h3 {
+    color: #ff7043;
+    border-color: #ff7043;
+}
+
+body.dark .static-section h4 {
+    color: #aaa;
+}
+
+body.dark .static-note,
+body.dark .static-source {
+    color: #888;
+}
+
+body.dark .static-callout {
+    background: linear-gradient(135deg, #2a2520 0%, #3a2a20 100%);
+    border-left-color: #ff9800;
+    color: #ffab91;
+}
+
+body.dark .static-callout.disclaimer {
+    background: linear-gradient(135deg, #1f1f1f 0%, #252525 100%);
+    border-left-color: #555;
+    color: #aaa;
+}
+
+body.dark .price-row,
+body.dark .channel-card,
+body.dark .contact-card,
+body.dark .legend-row,
+body.dark .accordion-item {
+    background: #1f1f1f;
+    border-color: #3a3a3a;
+}
+
+body.dark .contact-card.subcard {
+    background: #252525;
+    border-left-color: #ff7043;
+}
+
+body.dark .price-name,
+body.dark .channel-name,
+body.dark .contact-line,
+body.dark .info-meta-grid,
+body.dark .legend-text {
+    color: #e0e0e0;
+}
+
+body.dark .channel-info,
+body.dark .contact-address,
+body.dark .contact-info {
+    color: #aaa;
+}
+
+body.dark .contact-name {
+    color: #ff7043;
+}
+
+body.dark .price-value {
+    color: #ff7043;
+}
+
+body.dark .discount-list li {
+    color: #ccc;
+}
+
+body.dark .discount-list li::before {
+    color: #66bb6a;
+}
+
+body.dark .steps-list li {
+    color: #ddd;
+    border-color: #3a3a3a;
+}
+
+body.dark .steps-list li b {
+    color: #ff7043;
+}
+
+body.dark .channel-link,
+body.dark .contact-line a,
+body.dark .contact-link-main,
+body.dark .accordion-body a {
+    color: #64b5f6;
+}
+
+body.dark .accordion-header {
+    color: #e0e0e0;
+}
+
+body.dark .accordion-header:hover {
+    background: #2a2a2a;
+}
+
+body.dark .accordion-item.open .accordion-header {
+    background: linear-gradient(135deg, #b71c1c 0%, #8e0000 100%);
+}
+
+body.dark .accordion-arrow {
+    color: #aaa;
+}
+
+body.dark .accordion-body {
+    background: #252525;
+    color: #ddd;
+    border-color: #3a3a3a;
+}
+
+body.dark .info-key {
+    color: #888;
+}
+
+body.dark .muted {
+    color: #777;
+}
+body.dark .ticket-row {
+    background: #1f1f1f;
+    border-color: #3a3a3a;
+}
+
+body.dark .ticket-name {
+    color: #e0e0e0;
+}
+
+body.dark .ticket-desc {
+    color: #888;
+}
+
+body.dark .ticket-price-cell {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+}
+
+body.dark .ticket-price-cell.ulga {
+    background: #1a3a5a;
+    border-color: #1976d2;
+}
+
+body.dark .ticket-price-label {
+    color: #aaa;
+}
+
+body.dark .ticket-price-cell.ulga .ticket-price-label {
+    color: #64b5f6;
+}
+
+body.dark .ticket-price-value {
+    color: #ff7043;
+}
+
+body.dark .ticket-price-cell.ulga .ticket-price-value {
+    color: #64b5f6;
+}
+
+body.dark .fine-row {
+    background: #3a1a1a;
+    border-color: #5a1a1a;
+}
+
+body.dark .fine-name {
+    color: #e0c0c0;
+}
+
+body.dark .fine-price {
+    color: #ef9a9a;
+}

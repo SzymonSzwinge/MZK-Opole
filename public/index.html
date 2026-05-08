@@ -11,20 +11,20 @@
 </head>
 <body>
 
-<!-- WĄSKI PASEK Z NAZWAMI (zawsze widoczny) -->
 <div id="sidebar-rail">
     <div class="rail-logo">🚌 MZK Opole</div>
     <button class="rail-btn active" data-panel="trip">📍 Planuj podróż</button>
     <button class="rail-btn" data-panel="lines">🚌 Linie</button>
     <button class="rail-btn disabled">⭐ Ulubione <span class="rail-soon">wkrótce</span></button>
     <button class="rail-btn" data-panel="stats">📊 Statystyki</button>
+    <button class="rail-btn" data-panel="tickets">🎫 Bilety</button>
+    <button class="rail-btn" data-panel="help">❓ Pomoc</button>
+    <button class="rail-btn" data-panel="info">ℹ️ Informacje</button>
     <div class="rail-spacer"></div>
     <button class="rail-icon-btn" id="theme-toggle" title="Tryb ciemny/jasny">🌙</button>
 </div>
 
-<!-- ROZWIJANY PANEL -->
 <div id="sidebar-panel">
-    <!-- PANEL: PLANUJ PODRÓŻ (otwarty domyślnie) -->
     <div class="panel-content active" data-panel="trip">
         <div class="panel-header">
             <h2>📍 Planuj podróż</h2>
@@ -55,7 +55,6 @@
         </div>
     </div>
 
-    <!-- PANEL: LINIE -->
     <div class="panel-content" data-panel="lines">
         <div class="panel-header">
             <h2>🚌 Linie</h2>
@@ -63,20 +62,16 @@
         </div>
         <div class="panel-body">
             <div id="counter-detail" class="counter-detail">Ładowanie...</div>
-            
             <input type="text" id="search" placeholder="🔍 Szukaj linii (np. 5, N1)..." />
-            
             <div class="filter-toggles">
                 <label><input type="checkbox" id="filter-day" checked> Dzienne</label>
                 <label><input type="checkbox" id="filter-night" checked> Nocne</label>
             </div>
-            
             <div class="lines-divider">Wszystkie linie aktywne:</div>
             <div id="lines-list"></div>
         </div>
     </div>
 
-    <!-- PANEL: STATYSTYKI -->
     <div class="panel-content" data-panel="stats">
         <div class="panel-header">
             <h2>📊 Statystyki</h2>
@@ -86,18 +81,39 @@
             <div id="stats-content" class="stats-loading">⏳ Ładowanie...</div>
         </div>
     </div>
+
+    <div class="panel-content" data-panel="tickets">
+        <div class="panel-header">
+            <h2>🎫 Bilety</h2>
+            <button class="panel-close" data-close>✕</button>
+        </div>
+        <div class="panel-body" id="tickets-body"></div>
+    </div>
+
+    <div class="panel-content" data-panel="help">
+        <div class="panel-header">
+            <h2>❓ Pomoc</h2>
+            <button class="panel-close" data-close>✕</button>
+        </div>
+        <div class="panel-body" id="help-body"></div>
+    </div>
+
+    <div class="panel-content" data-panel="info">
+        <div class="panel-header">
+            <h2>ℹ️ Informacje</h2>
+            <button class="panel-close" data-close>✕</button>
+        </div>
+        <div class="panel-body" id="info-body"></div>
+    </div>
 </div>
 
-<!-- MAPA -->
 <div id="map"></div>
 
-<!-- POWIADOMIENIE FILTRA LINII -->
 <div id="filter-notice" class="filter-notice">
     <span id="filter-notice-text"></span>
     <button id="filter-notice-clear">✕ Wyczyść</button>
 </div>
 
-<!-- POWIADOMIENIA TRIP -->
 <div id="trip-notice-from" class="filter-notice trip-notice from">
     <span class="trip-notice-icon">🟢</span>
     <span id="trip-notice-from-text"></span>

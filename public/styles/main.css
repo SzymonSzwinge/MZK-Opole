@@ -27,3 +27,6 @@
 
 /* Statystyki */
 @import "components/stats.css";
+
+/* Bilety , Pomoc, Informacje  */
+@import "components/static.css";
