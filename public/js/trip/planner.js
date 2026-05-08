@@ -9,6 +9,7 @@ import { searchTrip, registerSearchGlobals } from "./search.js";
 import { updateTripNotices } from "../ui/notices.js";
 import { showVehicleRoute } from "../vehicles/route.js";
 import { registerScheduleGlobals } from "../stops/schedule.js";
+import { showPanel, onPanelClose } from "../ui/panels.js";
 
 export function initTripPlanner() {
     registerGlobalFunctions();
@@ -18,6 +19,53 @@ export function initTripPlanner() {
     setupButtons();
     setupClearButtons();
     setupNoticeClears();
+
+    // Zamknięcie panelu trip → wyczyść wszystko
+    onPanelClose("trip", () => {
+        resetTripPlanner();
+    });
+}
+
+/**
+ * Pełny reset planera — czyści A/B, inputy, wyniki, picking i filtry.
+ */
+function resetTripPlanner() {
+    // Stop picking
+    if (state.pickingMode) stopPicking();
+
+    // Wyczyść stan
+    state.setTripFrom(null);
+    state.setTripTo(null);
+    state.setReachableStopsFromOrigin(null);
+    state.setReachableStopsToDestination(null);
+    state.setLastTripResults([]);
+
+    // Wyczyść inputy
+    const fromInput = document.getElementById("trip-from-input");
+    const toInput = document.getElementById("trip-to-input");
+    if (fromInput) {
+        fromInput.value = "";
+        fromInput.classList.remove("set");
+    }
+    if (toInput) {
+        toInput.value = "";
+        toInput.classList.remove("set");
+    }
+
+    // Wyczyść wyniki
+    const results = document.getElementById("trip-results");
+    if (results) results.innerHTML = "";
+
+    // Stop countdown
+    if (state.countdownTimer) {
+        clearInterval(state.countdownTimer);
+        state.setCountdownTimer(null);
+    }
+
+    // Usuń A/B markery i przywróć przystanki
+    updateTripMarkers();
+    applyReachableFilter();
+    updateTripNotices();
 }
 
 function registerGlobalFunctions() {
@@ -32,6 +80,9 @@ function registerGlobalFunctions() {
         input.value = name;
         input.classList.add("set");
         map.closePopup();
+
+        // Otwórz panel planera
+        showPanel("trip");
 
         if (state.pickingMode === "from") {
             stopPicking();
@@ -55,6 +106,9 @@ function registerGlobalFunctions() {
         input.value = name;
         input.classList.add("set");
         map.closePopup();
+
+        // Otwórz panel planera
+        showPanel("trip");
 
         if (state.pickingMode === "to") {
             stopPicking();
