@@ -65,16 +65,18 @@ export async function showVehicleRoute(bus, highlightFrom, highlightTo) {
     // Szukamy live pojazd na tym kursie
     let liveVehicleId = null;
     for (const id in state.vehicles) {
-        if (state.vehicles[id].data.courseId === bus.courseId) {
+        if (String(state.vehicles[id].data.courseId) === String(bus.courseId)) {
             liveVehicleId = id;
             break;
         }
     }
+    let currentOrder = -1;
 
-    const vehicleHasStarted = !!liveVehicleId;
-    const currentOrder = vehicleHasStarted
-        ? (state.vehicles[liveVehicleId].data.orderInCourse ?? 0)
-        : -1;
+    if (liveVehicleId && state.vehicles[liveVehicleId]) {
+        currentOrder = state.vehicles[liveVehicleId].data.orderInCourse ?? -1;
+    }
+
+    const vehicleHasStarted = currentOrder > 0;
 
     stopsCluster.clearLayers();
 

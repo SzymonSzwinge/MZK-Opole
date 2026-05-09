@@ -1,14 +1,17 @@
 // ========== POPUP PRZYSTANKU ==========
 import { allLines } from "../state.js";
-import { escapeAttr } from "../utils.js";
 
 export function buildStopPopup(stop, departures, scheduleHtml = null) {
-    const safeName = escapeAttr(stop.name);
-
     const tripButtons = `
         <div class="popup-trip-buttons">
-            <button class="popup-trip-btn from-btn" onclick="window._setTripFrom('${stop.symbol}', '${safeName}')">🟢 Jedź stąd</button>
-            <button class="popup-trip-btn to-btn" onclick="window._setTripTo('${stop.symbol}', '${safeName}')">🔴 Jedź tutaj</button>
+            <button class="popup-trip-btn from-btn" 
+                data-action="set-trip-from"
+                data-symbol="${stop.symbol}"
+                data-name="${stop.name}">🟢 Jedź stąd</button>
+            <button class="popup-trip-btn to-btn"
+                data-action="set-trip-to"
+                data-symbol="${stop.symbol}"
+                data-name="${stop.name}">🔴 Jedź tutaj</button>
         </div>
     `;
 
@@ -82,7 +85,12 @@ export function buildStopPopup(stop, departures, scheduleHtml = null) {
             const vehicleInfo = d.vehicleId ? `#${d.vehicleId}` : "rozkład";
 
             depHtml += `
-                <li onclick="window._showDepRoute(${d.courseId}, ${d.variantId}, ${d.orderInCourse || 0}, '${d.vehicleId || ''}')">
+                <li class="dep-item"
+                    data-action="show-dep-route"
+                    data-course-id="${d.courseId}"
+                    data-variant-id="${d.variantId}"
+                    data-order="${d.orderInCourse || 0}"
+                    data-vehicle-id="${d.vehicleId || ''}">
                     <span class="${lineClass}">${d.line}</span>
                     <div class="dep-info">
                         <div class="dep-direction">→ ${d.direction}${stoppedTag}</div>
@@ -101,7 +109,10 @@ export function buildStopPopup(stop, departures, scheduleHtml = null) {
 
     const scheduleBtn = scheduleHtml
         ? ""
-        : `<button class="popup-schedule-btn" onclick="window._toggleSchedule('${stop.symbol}', '${safeName}')">📅 Pełny rozkład jazdy</button>`;
+        : `<button class="popup-schedule-btn"
+                data-action="toggle-schedule"
+                data-symbol="${stop.symbol}"
+                data-name="${stop.name}">📅 Pełny rozkład jazdy</button>`;
 
     const mainContent = `
         <div class="popup-main-content">

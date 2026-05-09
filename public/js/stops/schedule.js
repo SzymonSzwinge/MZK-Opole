@@ -6,53 +6,55 @@ import { buildStopPopup } from "./popup.js";
 import { loadStopDepartures } from "./loader.js";
 
 export function registerScheduleGlobals() {
-    window._toggleSchedule = async function (symbol, name) {
-        const stop = findStopBySymbol(symbol);
-        if (!stop) return;
-        const marker = stopMarkers.get(stop.id);
-        if (!marker) return;
+    // Puste — logika przeniesiona do event delegation w initPopupDelegation()
+}
 
-        const isOpen = openSchedules.get(symbol);
-        if (isOpen) {
-            openSchedules.set(symbol, false);
-            scheduleSelectedDate.delete(symbol);
-            loadStopDepartures(marker, stop);
-            return;
-        }
+export async function toggleSchedule(symbol) {
+    const stop = findStopBySymbol(symbol);
+    if (!stop) return;
+    const marker = stopMarkers.get(stop.id);
+    if (!marker) return;
 
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        scheduleSelectedDate.set(symbol, today.getTime());
-        openSchedules.set(symbol, true);
-        await refreshScheduleView(symbol);
-    };
-
-    window._closeSchedule = function (symbol) {
+    const isOpen = openSchedules.get(symbol);
+    if (isOpen) {
         openSchedules.set(symbol, false);
         scheduleSelectedDate.delete(symbol);
-        const stop = findStopBySymbol(symbol);
-        if (!stop) return;
-        const marker = stopMarkers.get(stop.id);
-        if (!marker) return;
         loadStopDepartures(marker, stop);
-    };
+        return;
+    }
 
-    window._changeScheduleDate = async function (symbol, dayOffset) {
-        const current = scheduleSelectedDate.get(symbol);
-        if (!current) return;
-        const newDate = new Date(current);
-        newDate.setDate(newDate.getDate() + dayOffset);
-        newDate.setHours(0, 0, 0, 0);
-        scheduleSelectedDate.set(symbol, newDate.getTime());
-        await refreshScheduleView(symbol);
-    };
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    scheduleSelectedDate.set(symbol, today.getTime());
+    openSchedules.set(symbol, true);
+    await refreshScheduleView(symbol);
+}
 
-    window._setScheduleToday = async function (symbol) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        scheduleSelectedDate.set(symbol, today.getTime());
-        await refreshScheduleView(symbol);
-    };
+export async function closeSchedule(symbol) {
+    openSchedules.set(symbol, false);
+    scheduleSelectedDate.delete(symbol);
+    const stop = findStopBySymbol(symbol);
+    if (!stop) return;
+    const marker = stopMarkers.get(stop.id);
+    if (!marker) return;
+    loadStopDepartures(marker, stop);
+}
+
+export async function changeScheduleDate(symbol, dayOffset) {
+    const current = scheduleSelectedDate.get(symbol);
+    if (!current) return;
+    const newDate = new Date(current);
+    newDate.setDate(newDate.getDate() + dayOffset);
+    newDate.setHours(0, 0, 0, 0);
+    scheduleSelectedDate.set(symbol, newDate.getTime());
+    await refreshScheduleView(symbol);
+}
+
+export async function setScheduleToday(symbol) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    scheduleSelectedDate.set(symbol, today.getTime());
+    await refreshScheduleView(symbol);
 }
 
 async function refreshScheduleView(symbol) {
@@ -123,23 +125,31 @@ function renderScheduleHeader(symbol, dateMs) {
 
     const resetBtn = isToday
         ? ""
-        : `<button class="schedule-reset-btn" onclick="event.stopPropagation(); window._setScheduleToday('${symbol}')" title="Wróć do dzisiejszej daty">↺ Powrót</button>`;
+        : `<button class="schedule-reset-btn"
+                data-action="schedule-today"
+                data-symbol="${symbol}">↺ Powrót</button>`;
 
     return `
         <div class="popup-schedule-header">
             <h4>📅 Rozkład jazdy</h4>
             <div class="popup-schedule-actions">
                 ${resetBtn}
-                <button class="popup-schedule-close" onclick="event.stopPropagation(); window._closeSchedule('${symbol}')" title="Zamknij rozkład">✕</button>
+                <button class="popup-schedule-close"
+                    data-action="close-schedule"
+                    data-symbol="${symbol}">✕</button>
             </div>
         </div>
         <div class="schedule-date-nav">
-            <button class="schedule-nav-btn" onclick="event.stopPropagation(); window._changeScheduleDate('${symbol}', -1)" title="Poprzedni dzień">‹</button>
+            <button class="schedule-nav-btn"
+                data-action="schedule-prev"
+                data-symbol="${symbol}">‹</button>
             <div class="schedule-date-label">
                 ${dayBadge}
                 <div class="schedule-date-main">${dateLabel}</div>
             </div>
-            <button class="schedule-nav-btn" onclick="event.stopPropagation(); window._changeScheduleDate('${symbol}', 1)" title="Następny dzień">›</button>
+            <button class="schedule-nav-btn"
+                data-action="schedule-next"
+                data-symbol="${symbol}">›</button>
         </div>
     `;
 }

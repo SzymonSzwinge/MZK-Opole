@@ -4,6 +4,7 @@ import { onPanelClose } from "../ui/panels.js";
 import { renderPunctualityDonut, destroyChart } from "./donutChart.js";
 import { showVehicleRoute } from "../vehicles/route.js";
 import { map } from "../map/mapInit.js";
+import * as state from "../state.js";
 
 const REFRESH_MS = 15000;
 let refreshTimer = null;
@@ -27,14 +28,31 @@ export function initStats() {
         closeStats();
     });
 
-    // Globalna funkcja klikania w pojazd ze statystyk
-    window._showStatVehicle = function (courseId, variantId, vehicleId, lat, lon) {
+    // ✅ Event delegation zamiast window._showStatVehicle
+    document.addEventListener("click", (e) => {
+        const card = e.target.closest('[data-action="show-stat-vehicle"]');
+        if (!card) return;
+
+        const courseId = card.dataset.courseId;
+        const variantId = card.dataset.variantId;
+        const vehicleId = card.dataset.vehicleId || "";
+        const lat = card.dataset.lat ? parseFloat(card.dataset.lat) : null;
+        const lon = card.dataset.lon ? parseFloat(card.dataset.lon) : null;
+
         if (!courseId || !variantId) return;
-        if (lat && lon) {
-            map.setView([lat, lon], 15);
+        if (lat && lon) map.setView([lat, lon], 15);
+
+        // ✅ Znajdź żywy pojazd na tym kursie i pobierz jego orderInCourse
+        let orderInCourse = 0;
+        for (const id in state.vehicles) {
+            if (String(state.vehicles[id].data.courseId) === String(courseId)) {
+                orderInCourse = state.vehicles[id].data.orderInCourse ?? 0;
+                break;
+            }
         }
-        showVehicleRoute({ courseId, variantId, vehicleId });
-    };
+
+        showVehicleRoute({ courseId, variantId, vehicleId, orderInCourse });
+    });
 }
 
 function openStats() {
@@ -142,12 +160,17 @@ function renderStats(d) {
         const safeDir = escapeHtml(mv.direction);
         const clickable = mv.courseId && mv.variantId;
 
-        const onClick = clickable
-            ? `onclick="window._showStatVehicle(${mv.courseId}, ${mv.variantId}, '${mv.vehicleId}', ${mv.lat || "null"}, ${mv.lon || "null"})"`
-            : "";
-
+        // ✅ data-action zamiast onclick
         mostDelayedVehicleHtml = `
-            <div class="stat-card stat-vehicle-card ${clickable ? "clickable" : ""}" ${onClick}>
+            <div class="stat-card stat-vehicle-card ${clickable ? "clickable" : ""}"
+                ${clickable ? `
+                    data-action="show-stat-vehicle"
+                    data-course-id="${mv.courseId}"
+                    data-variant-id="${mv.variantId}"
+                    data-vehicle-id="${mv.vehicleId || ''}"
+                    data-lat="${mv.lat || ''}"
+                    data-lon="${mv.lon || ''}"
+                ` : ""}>
                 <div class="stat-section-title">🐢 Najbardziej opóźniony pojazd</div>
                 <div class="stat-most-delayed">
                     <span class="${lineClass}">${mv.line}</span>
@@ -174,7 +197,6 @@ function renderStats(d) {
     }
 
     container.innerHTML = `
-        <!-- Pojazdy na trasach -->
         <div class="stat-card">
             <div class="stat-section-title">🚌 Pojazdy na trasach</div>
             <div class="stat-big-number">${d.vehicles.total}</div>
@@ -185,14 +207,12 @@ function renderStats(d) {
             <div class="stat-source">Dane na żywo z systemu MZK</div>
         </div>
 
-        <!-- Średnie opóźnienie -->
         <div class="stat-card">
             <div class="stat-section-title">⏱️ Średnie opóźnienie w mieście</div>
             <div class="stat-big-number ${avgClass}">${formatDelay(p.avgDelaySec)}</div>
             <div class="stat-source">Średnia ze wszystkich aktywnych pojazdów</div>
         </div>
 
-        <!-- Punktualność -->
         <div class="stat-card">
             <div class="stat-section-title">🎯 Punktualność pojazdów</div>
             <div class="stat-donut-wrap">
@@ -218,13 +238,9 @@ function renderStats(d) {
             <div class="stat-source">Punktualne = odchylenie ±1 min od rozkładu</div>
         </div>
 
-        <!-- Najbardziej opóźniona linia -->
         ${mostDelayedLineHtml}
-
-        <!-- Najbardziej opóźniony pojazd -->
         ${mostDelayedVehicleHtml}
 
-        <!-- Sieć MZK -->
         <div class="stat-card">
             <div class="stat-section-title">🗺️ Sieć MZK Opole</div>
             <div class="stat-grid-2">

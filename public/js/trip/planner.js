@@ -11,6 +11,15 @@ import { showVehicleRoute } from "../vehicles/route.js";
 import { registerScheduleGlobals } from "../stops/schedule.js";
 import { showPanel, onPanelClose } from "../ui/panels.js";
 
+// ✅ Debounce — opóźnia wywołanie funkcji
+function debounce(fn, ms = 250) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), ms);
+    };
+}
+
 export function initTripPlanner() {
     registerGlobalFunctions();
     registerSearchGlobals();
@@ -20,49 +29,33 @@ export function initTripPlanner() {
     setupClearButtons();
     setupNoticeClears();
 
-    // Zamknięcie panelu trip → wyczyść wszystko
     onPanelClose("trip", () => {
         resetTripPlanner();
     });
 }
 
-/**
- * Pełny reset planera — czyści A/B, inputy, wyniki, picking i filtry.
- */
 function resetTripPlanner() {
-    // Stop picking
     if (state.pickingMode) stopPicking();
 
-    // Wyczyść stan
     state.setTripFrom(null);
     state.setTripTo(null);
     state.setReachableStopsFromOrigin(null);
     state.setReachableStopsToDestination(null);
     state.setLastTripResults([]);
 
-    // Wyczyść inputy
     const fromInput = document.getElementById("trip-from-input");
     const toInput = document.getElementById("trip-to-input");
-    if (fromInput) {
-        fromInput.value = "";
-        fromInput.classList.remove("set");
-    }
-    if (toInput) {
-        toInput.value = "";
-        toInput.classList.remove("set");
-    }
+    if (fromInput) { fromInput.value = ""; fromInput.classList.remove("set"); }
+    if (toInput) { toInput.value = ""; toInput.classList.remove("set"); }
 
-    // Wyczyść wyniki
     const results = document.getElementById("trip-results");
     if (results) results.innerHTML = "";
 
-    // Stop countdown
     if (state.countdownTimer) {
         clearInterval(state.countdownTimer);
         state.setCountdownTimer(null);
     }
 
-    // Usuń A/B markery i przywróć przystanki
     updateTripMarkers();
     applyReachableFilter();
     updateTripNotices();
@@ -80,23 +73,15 @@ function registerGlobalFunctions() {
         input.value = name;
         input.classList.add("set");
         map.closePopup();
-
-        // Otwórz panel planera
         showPanel("trip");
 
-        if (state.pickingMode === "from") {
-            stopPicking();
-        }
+        if (state.pickingMode === "from") stopPicking();
 
         await loadReachableStops(symbol);
-
-        if (!state.tripTo) {
-            applyReachableFilter();
-        }
+        if (!state.tripTo) applyReachableFilter();
 
         updateTripMarkers();
         updateTripNotices();
-
         if (state.tripTo) searchTrip();
     };
 
@@ -106,23 +91,15 @@ function registerGlobalFunctions() {
         input.value = name;
         input.classList.add("set");
         map.closePopup();
-
-        // Otwórz panel planera
         showPanel("trip");
 
-        if (state.pickingMode === "to") {
-            stopPicking();
-        }
+        if (state.pickingMode === "to") stopPicking();
 
         await loadReverseReachableStops(symbol);
-
-        if (!state.tripFrom) {
-            applyReachableFilter();
-        }
+        if (!state.tripFrom) applyReachableFilter();
 
         updateTripMarkers();
         updateTripNotices();
-
         if (state.tripFrom) searchTrip();
     };
 }
@@ -150,9 +127,14 @@ function setupStopSearch(inputId, suggestionsId, callback) {
     const isFromInput = inputId === "trip-from-input";
     const isToInput = inputId === "trip-to-input";
 
-    input.addEventListener("input", () => {
+    // ✅ Debouncing — czeka 200ms po ostatnim klawiszu
+    const handleInput = debounce(() => {
         const q = input.value.trim().toLowerCase();
-        if (q.length < 2) { dropdown.classList.remove("visible"); return; }
+
+        if (q.length < 2) {
+            dropdown.classList.remove("visible");
+            return;
+        }
 
         const seen = new Set();
         const matches = state.allStopsData
@@ -161,13 +143,15 @@ function setupStopSearch(inputId, suggestionsId, callback) {
                 if (seen.has(key)) return false;
                 seen.add(key);
 
-                const matchesText = s.name.toLowerCase().includes(q) || (s.street && s.street.toLowerCase().includes(q));
+                const matchesText =
+                    s.name.toLowerCase().includes(q) ||
+                    (s.street && s.street.toLowerCase().includes(q));
                 if (!matchesText) return false;
 
-                if (isToInput && state.reachableStopsFromOrigin && state.reachableStopsFromOrigin.size > 1) {
+                if (isToInput && state.reachableStopsFromOrigin?.size > 1) {
                     if (!state.reachableStopsFromOrigin.has(s.symbol)) return false;
                 }
-                if (isFromInput && state.reachableStopsToDestination && state.reachableStopsToDestination.size > 1) {
+                if (isFromInput && state.reachableStopsToDestination?.size > 1) {
                     if (!state.reachableStopsToDestination.has(s.symbol)) return false;
                 }
 
@@ -175,14 +159,22 @@ function setupStopSearch(inputId, suggestionsId, callback) {
             })
             .slice(0, 6);
 
-        if (matches.length === 0) { dropdown.classList.remove("visible"); return; }
+        if (matches.length === 0) {
+            dropdown.classList.remove("visible");
+            return;
+        }
 
         dropdown.innerHTML = matches.map((s) => `
-            <div class="suggestion-item" data-symbol="${s.symbol}" data-name="${escapeAttr(s.name)}">
+            <div class="suggestion-item"
+                data-symbol="${s.symbol}"
+                data-name="${escapeAttr(s.name)}">
                 <div class="suggestion-name">${s.name}</div>
-                <div class="suggestion-street">${s.street ? `ul. ${s.street}` : ""} (${s.symbol})</div>
+                <div class="suggestion-street">
+                    ${s.street ? `ul. ${s.street}` : ""} (${s.symbol})
+                </div>
             </div>
         `).join("");
+
         dropdown.classList.add("visible");
 
         dropdown.querySelectorAll(".suggestion-item").forEach((el) => {
@@ -193,7 +185,9 @@ function setupStopSearch(inputId, suggestionsId, callback) {
                 dropdown.classList.remove("visible");
             });
         });
-    });
+    }, 200);
+
+    input.addEventListener("input", handleInput);
 
     input.addEventListener("blur", () => {
         setTimeout(() => dropdown.classList.remove("visible"), 200);
@@ -214,10 +208,13 @@ function setupClearButtons() {
         input.classList.remove("set");
         document.getElementById("trip-results").innerHTML = "";
         state.setLastTripResults([]);
-        if (state.countdownTimer) { clearInterval(state.countdownTimer); state.setCountdownTimer(null); }
+
+        if (state.countdownTimer) {
+            clearInterval(state.countdownTimer);
+            state.setCountdownTimer(null);
+        }
 
         state.setReachableStopsFromOrigin(null);
-
         if (state.pickingMode) stopPicking();
 
         updateTripMarkers();
@@ -232,10 +229,13 @@ function setupClearButtons() {
         input.classList.remove("set");
         document.getElementById("trip-results").innerHTML = "";
         state.setLastTripResults([]);
-        if (state.countdownTimer) { clearInterval(state.countdownTimer); state.setCountdownTimer(null); }
+
+        if (state.countdownTimer) {
+            clearInterval(state.countdownTimer);
+            state.setCountdownTimer(null);
+        }
 
         state.setReachableStopsToDestination(null);
-
         if (state.pickingMode) stopPicking();
 
         updateTripMarkers();
@@ -251,11 +251,8 @@ function setupNoticeClears() {
             if (what === "from") {
                 document.getElementById("trip-from-clear").click();
             } else if (what === "to") {
-                if (state.pickingMode === "to") {
-                    stopPicking();
-                } else {
-                    document.getElementById("trip-to-clear").click();
-                }
+                if (state.pickingMode === "to") stopPicking();
+                else document.getElementById("trip-to-clear").click();
             } else if (what === "plan") {
                 document.getElementById("trip-from-clear").click();
             }

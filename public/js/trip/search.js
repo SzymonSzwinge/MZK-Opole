@@ -15,7 +15,6 @@ export async function searchTrip() {
             `/api/plan?from=${encodeURIComponent(state.tripFrom.symbol)}&to=${encodeURIComponent(state.tripTo.symbol)}`
         );
         state.setLastTripResults(results);
-        window._tripResults = results;
         renderTripResults();
     } catch {
         resultsDiv.innerHTML = `<div class="trip-no-results">❌ Błąd wyszukiwania</div>`;
@@ -97,8 +96,13 @@ export function renderTripResults() {
         const lineClass = r.nightLine ? "trip-result-line night" : "trip-result-line";
         const vehicleInfo = r.vehicleId ? `Pojazd #${r.vehicleId}` : "rozkładowo";
 
+        // ✅ data-index zamiast onclick z indeksem
+        const resultIndex = state.lastTripResults.indexOf(r);
+
         return `
-            <div class="trip-result" onclick="window._showTripResult(${state.lastTripResults.indexOf(r)})">
+            <div class="trip-result"
+                data-action="show-trip-result"
+                data-index="${resultIndex}">
                 <div class="trip-result-header">
                     <span class="${lineClass}">${r.line}</span>
                     <span class="trip-result-direction">→ ${r.direction}</span>
@@ -156,15 +160,20 @@ function attachFilterListeners() {
     }
 }
 
+// ✅ Event delegation dla wyników podróży
 export function registerSearchGlobals() {
-    window._tripResults = [];
-    window._showTripResult = function (index) {
-        const r = window._tripResults[index];
+    document.addEventListener("click", (e) => {
+        const el = e.target.closest('[data-action="show-trip-result"]');
+        if (!el) return;
+
+        const index = parseInt(el.dataset.index);
+        const r = state.lastTripResults[index];
         if (!r) return;
+
         showVehicleRoute(
             { courseId: r.courseId, variantId: r.variantId, orderInCourse: r.fromOrder, vehicleId: r.vehicleId },
             state.tripFrom?.symbol,
             state.tripTo?.symbol
         );
-    };
+    });
 }

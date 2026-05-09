@@ -22,11 +22,17 @@ async function planTrip(fromSymbol, toSymbol) {
         .slice(0, 30);
 
     const results = [];
-    const seenCourseTimes = new Set();
+    const seenCourseIds = new Set();
     const BATCH = 6;
 
     for (let i = 0; i < realtimeDeps.length; i += BATCH) {
         const batch = realtimeDeps.slice(i, i + BATCH);
+
+        // ✅ Od razu blokujemy WSZYSTKIE courseId z batcha — niezależnie czy znajdziemy parę fromStop/toStop
+        for (const dep of batch) {
+            seenCourseIds.add(String(dep.courseId));
+        }
+
         const promises = batch.map((dep) =>
             fetchJson(`/getRealCourse.json?courseId=${dep.courseId}`)
                 .then((raw) => {
@@ -49,9 +55,6 @@ async function planTrip(fromSymbol, toSymbol) {
                             stopsAway = fromStop.orderInCourse - (liveVehicle.orderInCourse || 0);
                             if (stopsAway < 0) vehicleStatus = "passed_start";
                         }
-
-                        const key = `${dep.courseId}_${depTime}`;
-                        seenCourseTimes.add(key);
 
                         return {
                             line: dep.lineName,
@@ -112,8 +115,8 @@ async function planTrip(fromSymbol, toSymbol) {
                     const realTime = dateMs + dep.scheduledDepartureSec * 1000;
                     if (realTime < now - 60000) continue;
 
-                    const key = `${dep.courseId}_${realTime}`;
-                    if (seenCourseTimes.has(key)) continue;
+                    // ✅ Filtrowanie tylko po courseId — niezależnie od czasu
+                    if (seenCourseIds.has(String(dep.courseId))) continue;
 
                     dayCourses.push({
                         courseId: dep.courseId,
@@ -132,6 +135,12 @@ async function planTrip(fromSymbol, toSymbol) {
 
             for (let i = 0; i < dayCourses.length && scheduleResults.length < needed; i += BATCH) {
                 const batch = dayCourses.slice(i, i + BATCH);
+
+                // ✅ Również blokujemy courseId z batcha rozkładu
+                for (const c of batch) {
+                    seenCourseIds.add(String(c.courseId));
+                }
+
                 const promises = batch.map((c) =>
                     fetchJson(`/getRealCourse.json?courseId=${c.courseId}`)
                         .then((raw) => {

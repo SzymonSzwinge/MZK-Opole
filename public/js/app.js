@@ -13,6 +13,7 @@ import { initGeolocation } from "./ui/geolocation.js";
 import { initTripPlanner } from "./trip/planner.js";
 import { initStats } from "./stats/stats.js";
 import { initStaticPanels } from "./static/static.js";
+import { initPopupDelegation } from "./ui/popupDelegation.js"; // ✅ NOWE
 
 async function loadLines() {
     try {
@@ -33,6 +34,7 @@ initGeolocation();
 initTripPlanner();
 initStats();
 initStaticPanels();
+initPopupDelegation(); // ✅ NOWE — musi być po initTripPlanner (bo _setTripFrom/To rejestrowane tam)
 
 (async () => {
     await loadLines();

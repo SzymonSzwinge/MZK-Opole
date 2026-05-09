@@ -5,7 +5,8 @@ import { map } from "../map/mapInit.js";
 import { updateFilterNotice } from "../ui/notices.js";
 
 export function shouldShowVehicle(v) {
-    if (state.focusedCourseId !== null) return v.courseId === state.focusedCourseId;
+    if (state.focusedCourseId !== null)
+    return String(v.courseId) === String(state.focusedCourseId);
 
     if (!state.showDay && !v.nightLine) return false;
     if (!state.showNight && v.nightLine) return false;

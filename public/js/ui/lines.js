@@ -4,6 +4,15 @@ import * as state from "../state.js";
 import { applyFilters } from "../vehicles/filters.js";
 import { highlightStopsForLine } from "../stops/highlight.js";
 
+// ✅ Debounce
+function debounce(fn, ms = 250) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), ms);
+    };
+}
+
 export function renderLinesList() {
     const list = document.getElementById("lines-list");
     list.innerHTML = "";
@@ -34,18 +43,24 @@ export function renderLinesList() {
 }
 
 export function initLinesPanel() {
-    document.getElementById("search").addEventListener("input", (e) => {
-        state.setSearchQuery(e.target.value.trim());
+    // ✅ Debouncing na wyszukiwarce
+    const handleSearch = debounce((value) => {
+        state.setSearchQuery(value);
         applyFilters();
 
-        const matchingLines = Array.from(allLines.keys()).filter(name =>
-            name.toLowerCase().startsWith(state.searchQuery.toLowerCase())
+        const matchingLines = Array.from(allLines.keys()).filter((name) =>
+            name.toLowerCase().startsWith(value.toLowerCase())
         );
+
         if (matchingLines.length === 1) {
             highlightStopsForLine(matchingLines[0]);
-        } else if (!state.searchQuery && !state.activeLineFilter) {
+        } else if (!value && !state.activeLineFilter) {
             highlightStopsForLine(null);
         }
+    }, 200);
+
+    document.getElementById("search").addEventListener("input", (e) => {
+        handleSearch(e.target.value.trim());
     });
 
     document.getElementById("filter-day").addEventListener("change", (e) => {
